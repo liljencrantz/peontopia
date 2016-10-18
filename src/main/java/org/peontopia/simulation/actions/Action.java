@@ -28,11 +28,11 @@ public interface Action {
 
   class PeonActions {
 
-    public static Action move(Peon p, int dx, int dy) {
+    public Action move(Peon p, int dx, int dy) {
       return new PeonMove(p.id(), dx, dy, true);
     }
 
-    public static Action setCoord(Peon p, int x, int y) {
+    public Action setCoord(Peon p, int x, int y) {
       return new PeonMove(p.id(), x, y, false);
     }
 
@@ -42,7 +42,7 @@ public interface Action {
      * @param p the peon that should perform the action
      * @return true
      */
-    public static Action die(Peon p) {
+    public Action die(Peon p) {
       return world -> { world.removePeon(p.id()); return true;};
     }
 
@@ -51,7 +51,7 @@ public interface Action {
      * @param p the peon that should perform the action
      * @return true if this peon is fully rested and this action need not be applied again
      */
-    public static Action sleep(Peon p) {
+    public Action sleep(Peon p) {
       return world -> world.peon(p.id()).addRest(3).rest() == Peon.MAX_REST;
     }
 
@@ -60,7 +60,7 @@ public interface Action {
      * @param p the peon that should perform the action
      * @return true if this peon cannot eat any more
      */
-    public static Action eat(Peon p) {
+    public Action eat(Peon p) {
       return world -> world.peon(p.id()).addFood(10).food() == Peon.MAX_FOOD;
     }
 
@@ -70,11 +70,15 @@ public interface Action {
      * @param p
      * @return
      */
-    public static Action work(Peon p) {
+    public Action work(Peon p) {
       return new PeonWork(p.id());
     }
 
-    public static Action play(Peon p) {
+    public Action chores(Peon p) {
+      return world -> true;
+    }
+
+    public Action play(Peon p) {
       return world -> true;
     }
   }

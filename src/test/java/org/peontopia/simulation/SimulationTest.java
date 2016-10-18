@@ -15,7 +15,6 @@ import org.peontopia.simulation.actions.Action;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.peontopia.simulation.actions.Action.PeonActions.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -33,24 +32,26 @@ public class SimulationTest {
   Simulation simulation;
   MutableWorld world;
   MutableWorld.MutablePeon peon;
+  Action.PeonActions actions;
 
   @Before
   public void setUp() {
     world = new MutableWorld(5, 5);
     peon = world.addPeon(1, 1);
     simulation = new Simulation(world, peonSimulator);
+    actions = new Action.PeonActions();
   }
 
   @Test
   public void testMovePeonAbsolute() {
-    when(peonSimulator.step(world, peon)).thenReturn(setCoord(peon, 2, 2));
+    when(peonSimulator.step(world, peon)).thenReturn(actions.setCoord(peon, 2, 2));
     World newWorld = simulation.step();
     assertEquals(1, newWorld.tile(2, 2).peons().size());
   }
 
   @Test
   public void testMovePeonRelative() {
-    when(peonSimulator.step(world, peon)).thenReturn(move(peon, -1, 1));
+    when(peonSimulator.step(world, peon)).thenReturn(actions.move(peon, -1, 1));
     World newWorld = simulation.step();
     assertEquals(1, newWorld.tile(0, 2).peons().size());
   }
@@ -80,7 +81,7 @@ public class SimulationTest {
   public void testMultipleSimulationSteps() {
     World w = world;
     when(peonSimulator.step(any(World.class), any(Peon.class)))
-        .thenAnswer(i -> move(((World)i.getArguments()[0]).peon(peon.id()), 0, 1));
+        .thenAnswer(i -> actions.move(((World)i.getArguments()[0]).peon(peon.id()), 0, 1));
     for (int i=0; i < 3; i++) {
       w = simulation.step();
     }
