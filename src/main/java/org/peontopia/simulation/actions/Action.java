@@ -4,11 +4,14 @@ import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Peon;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * Created by axel on 15/10/16.
+ * These specific actions, like moving from A to B, buying some goods,
+ * performing some work, etc are the basic building blocks that make up
+ * the game AI.
  */
 public interface Action {
   boolean apply(MutableWorld world);
@@ -26,6 +29,26 @@ public interface Action {
     };
   }
 
+  /**
+   * Create an action object that will do nothing for the specified number of steps and then begin
+   * performing the specified action.
+   */
+  static Action delay(Action action, int delayBy) {
+    if (delayBy < 0)
+      throw new IllegalArgumentException();
+    AtomicInteger count = new AtomicInteger();
+    return world -> {
+      if (count.get() == delayBy) {
+        return action.apply(world);
+      }
+      count.addAndGet(1);
+      return false;
+    };
+  }
+
+  /**
+   * The building blocks for building the Peon AI
+   */
   class PeonActions {
 
     public Action move(Peon p, int dx, int dy) {
