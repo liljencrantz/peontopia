@@ -1,0 +1,41 @@
+MVP1
+
+A working simulation that is advanced enough to give an indication of maximum number of peons we can
+support.
+
+Resource tree
+Resource loader
+Resource visualizer
+
+Add base resources to world
+Make factories refine resources
+
+Add employees to companies
+Add roads
+Add zoning
+
+Add company creation
+Make stores work
+Make peons shop
+
+Add homes
+Add home buying
+
+Calculate happiness
+
+MVP2
+
+A minimal UI that shows status changes and allows simple manipulations
+
+MVP3
+
+Point to point transport, walking, horses, carriages, cars, lorries,
+
+Path finding
+Congestion
+
+MVP4
+
+Initial game balancing
+
+

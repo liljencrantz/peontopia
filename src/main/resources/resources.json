@@ -1,0 +1,148 @@
+{
+  "resources": [
+
+    // Base resources
+    {
+      "name": "Oil",
+      "availability": 1,
+      "speed": 4
+    },
+    {
+      "name": "Wood",
+      "availability": 4,
+      "renewable": true
+    },
+    {
+      "name": "Grain",
+      "availability": 5,
+      "renewable": true
+    },
+    {
+      "name": "Ore",
+      "availability": 2
+    },
+    {
+      "name": "Cement",
+      "availability": 2,
+      "speed": 4
+    },
+    {
+      "name": "Stone",
+      "availability": 3,
+      "speed": 4
+    },
+    {
+      "name": "Clay",
+      "availability": 3,
+      "speed": 4
+    },
+    {
+      "name": "Coal",
+      "availability": 2,
+      "speed": 4
+    },
+    {
+      "name": "Cotton",
+      "availability": 4,
+      "renewable": true
+    },
+    {
+      "name": "Rubber",
+      "availability": 3,
+      "renewable": true,
+      "speed": 2
+    },
+    {
+      "name": "Herbs",
+      "availability": 2,
+      "renewable": true,
+      "speed": 2
+    },
+    {
+      "name": "Gold",
+      "availability": 1,
+      "speed": 2
+    },
+    {
+      "name": "Diamonds",
+      "availability": 0,
+      "speed": 1
+    },
+
+    // Intermediate resources
+    {
+      "name": "Concrete",
+      "speed": 5,
+      "ingredients": [{"name":"Cement", "amount": 0.5},{"name":"Stone", "amount": 0.5}]
+    },
+    {
+      "name": "Metal",
+      "speed": 4,
+      "ingredients": [{"name":"Ore", "amount": 10}]
+    },
+    {
+      "name": "Semiconductor",
+      "speed": 2,
+      "ingredients": [{"name":"Cement", "amount": 20}]
+    },
+    {
+      "name": "Electronic circuts",
+      "speed": 2,
+      "ingredients": [
+        {"name":"Sand", "amount": 2},
+        {"name":"Metal", "amount": 0.5},
+        {"name":"Electronic circuts", "amount": 0.5}
+      ]
+    },
+    {
+      "name": "Paint",
+      "speed": 2,
+      "ingredients": [{"name":"Oil", "amount": 1},{"name":"Clay", "amount": 0.1}]
+    },
+    {
+      "name": "Boards",
+      "speed": 5,
+      "ingredients": [{"name":"", "amount": 0.5},{"name":"", "amount": 0.5}]
+    },
+    {
+      "name": "Paper",
+      "speed": 4,
+      "ingredients": [{"name":"Wood", "amount": 4},{"name":"Solvent", "amount": 0.1}]
+    },
+    {
+      "name": "Animals",
+      "speed": 3,
+      "ingredients": [{"name":"Grain", "amount": 10}]
+    },
+    {
+      "name": "Solvent",
+      "speed": 3,
+      "ingredients": [{"name":"Oil", "amount": 4}]
+    },
+    {
+      "name": "Plastic",
+      "speed": 4,
+      "ingredients": [{"name":"Oil", "amount": 2}]
+    },
+    {
+      "name": "Brick",
+      "speed": 4,
+      "ingredients": [{"name":"Clay", "amount": 2}]
+    },
+
+    // Consumable resources
+    {
+      "name": "Furniture",
+      "class":"non-perishable",
+      "speed": 4,
+      "ingredients": [{"name":"Wood"},{"name":"Paint", "amount": 0.1}]
+    },
+    {
+      "name": "Jewelry",
+      "class":"non-perishable",
+      "speed": 1,
+      "ingredients": [{"name":"Gold"},{"name":"Diamonds", "amount": 0.2}]
+    }
+
+  ]
+}
