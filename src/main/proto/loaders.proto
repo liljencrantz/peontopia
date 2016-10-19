@@ -1,0 +1,21 @@
+package org.peontopia.loaders;
+
+option java_outer_classname = "Schema";
+
+message ResourceFile {
+    repeated Resource resources = 1;
+}
+
+message Resource {
+  required string name = 1;
+  optional int32 availability = 2 [default = 3];
+  optional int32 speed = 3 [default = 3];
+  optional bool renewable = 4 [default = false];
+  optional string class = 5;
+  repeated ResourceIngredient ingredients = 6;
+}
+
+message ResourceIngredient {
+    required string name = 1;
+    optional double amount = 2 [default = 1];
+}

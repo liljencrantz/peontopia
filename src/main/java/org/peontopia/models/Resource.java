@@ -9,8 +9,23 @@ public class Resource {
 
   private final Collection<Ingredient> ingredients;
   private final String name;
+  private final int availability;
+  private final int speed;
+  private final boolean renewable;
+  private final String resourceClass;
 
-  public Resource(Collection<Ingredient> ingredients, String name) {
+
+  public Resource(
+      String name,
+      int availability,
+      int speed,
+      boolean renewable,
+      String resourceClass,
+      Collection<Ingredient> ingredients) {
+    this.availability = availability;
+    this.speed = speed;
+    this.renewable = renewable;
+    this.resourceClass = resourceClass;
     this.ingredients = ingredients;
     this.name = name;
   }
@@ -23,16 +38,32 @@ public class Resource {
     return ingredients;
   }
 
-  class Ingredient {
-    private final int amount;
+  public int availability() {
+    return availability;
+  }
+
+  public int speed() {
+    return speed;
+  }
+
+  public boolean renewable() {
+    return renewable;
+  }
+
+  public String resourceClass() {
+    return resourceClass;
+  }
+
+  public static class Ingredient {
+    private final double amount;
     private final Resource resource;
 
-    Ingredient(int amount, Resource resource) {
+    public Ingredient(Resource resource, double amount) {
       this.amount = amount;
       this.resource = resource;
     }
 
-    public int amount() {
+    public double amount() {
       return amount;
     }
 

@@ -68,6 +68,11 @@
       "availability": 0,
       "speed": 1
     },
+    {
+      "name": "Sand",
+      "availability": 3,
+      "speed": 4
+    },
 
     // Intermediate resources
     {
@@ -91,7 +96,7 @@
       "ingredients": [
         {"name":"Sand", "amount": 2},
         {"name":"Metal", "amount": 0.5},
-        {"name":"Electronic circuts", "amount": 0.5}
+        {"name":"Semiconductor", "amount": 0.5}
       ]
     },
     {
@@ -102,7 +107,7 @@
     {
       "name": "Boards",
       "speed": 5,
-      "ingredients": [{"name":"", "amount": 0.5},{"name":"", "amount": 0.5}]
+      "ingredients": [{"name":"Wood", "amount": 1}]
     },
     {
       "name": "Paper",
@@ -132,14 +137,14 @@
 
     // Consumable resources
     {
-      "name": "Furniture",
-      "class":"non-perishable",
+      "name": "Bed",
+      "class":"furniture",
       "speed": 4,
-      "ingredients": [{"name":"Wood"},{"name":"Paint", "amount": 0.1}]
+      "ingredients": [{"name":"Wood"},{"name":"Paint", "amount": 0.1},{"name":"Metal", "amount": 0.1}]
     },
     {
       "name": "Jewelry",
-      "class":"non-perishable",
+      "class":"jewlery",
       "speed": 1,
       "ingredients": [{"name":"Gold"},{"name":"Diamonds", "amount": 0.2}]
     }
