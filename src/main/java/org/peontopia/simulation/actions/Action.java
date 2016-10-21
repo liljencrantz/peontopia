@@ -30,6 +30,21 @@ public interface Action {
   }
 
   /**
+   * Create single action object that executes multiple actions in a single step.
+   * Warning: All actions are executed every time, even ones that have previously returned true.
+   * Returns true once all actions return true.
+   */
+  static Action combine(Action... actions) {
+    List<Action> all = newArrayList(actions);
+    return world -> {
+      boolean done = true;
+      for (Action a: all)
+        done &= a.apply(world);
+      return done;
+    };
+  }
+
+  /**
    * Create an action object that will do nothing for the specified number of steps and then begin
    * performing the specified action.
    */
@@ -50,6 +65,15 @@ public interface Action {
    * The building blocks for building the Peon AI
    */
   class PeonActions {
+
+    /* Basic passage of time. Become more tired, more hungry, etc. */
+    public Action age(Peon orig) {
+      return world -> {
+        MutableWorld.MutablePeon peon = world.peon(orig.id());
+        peon.addRest(-1).addFood(-1);
+        return true;
+      };
+    }
 
     public Action move(Peon p, int dx, int dy) {
       return new PeonMove(p.id(), dx, dy, true);

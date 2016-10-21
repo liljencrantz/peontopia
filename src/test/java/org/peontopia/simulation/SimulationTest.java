@@ -7,6 +7,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.peontopia.models.ActorMapper;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Peon;
 import org.peontopia.models.World;
@@ -29,6 +30,8 @@ public class SimulationTest {
 
   @Mock
   PeonSimulator peonSimulator;
+  @Mock
+  MarketSimulator marketSimulator;
   Simulation simulation;
   MutableWorld world;
   MutableWorld.MutablePeon peon;
@@ -38,7 +41,12 @@ public class SimulationTest {
   public void setUp() {
     world = new MutableWorld(5, 5);
     peon = world.addPeon(1, 1);
-    simulation = new Simulation(world, peonSimulator);
+    simulation = new Simulation(
+        world,
+        ActorMapper.<ActorSimulator>builder()
+            .store((w, a) -> (ww -> true))
+            .factory((w, a) -> (ww -> true))
+            .peon(peonSimulator).build() , marketSimulator);
     actions = new Action.PeonActions();
   }
 

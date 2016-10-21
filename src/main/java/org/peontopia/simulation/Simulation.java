@@ -2,8 +2,8 @@ package org.peontopia.simulation;
 
 import com.google.common.collect.Lists;
 
+import org.peontopia.models.ActorMapper;
 import org.peontopia.models.MutableWorld;
-import org.peontopia.models.Peon;
 import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
 
@@ -13,34 +13,34 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by axel on 14/10/16.
+ * The main glue that binds all the pieces of the simulation (peon ai, company ai, water, power,
+ * etc) together
  */
 public class Simulation {
 
   private World world;
-  private final PeonSimulator peonSimulator;
+  private final ActorMapper<ActorSimulator> actorSimulator;
   private final Map<Long, Action> currentAction = new HashMap<>();
+  private final MarketSimulator marketSimulator;
 
-  public Simulation(World world, PeonSimulator peonSimulator) {
+  public Simulation(World world, ActorMapper<ActorSimulator> actorSimulator, MarketSimulator marketSimulator) {
     this.world = world;
-    this.peonSimulator = peonSimulator;
+    this.actorSimulator = actorSimulator;
+    this.marketSimulator = marketSimulator;
   }
 
   public World step() {
+    marketSimulator.step();
     MutableWorld nextWorld = MutableWorld.thaw(world);
 
     world.actors().stream()
         .filter(p -> !currentAction.containsKey(p.id()))
         .forEach(actor -> {
-          if (actor instanceof Peon) {
-            Peon p = (Peon) actor;
-
-            Action a = peonSimulator.step(world, p);
+            Action a = actorSimulator.get(actor).step(world, actor);
             if (a == null) {
               throw new RuntimeException("PeonSimulator returned null");
             }
-            currentAction.put(p.id(), a);
-          }
+            currentAction.put(actor.id(), a);
         });
 
     List<Map.Entry<Long, Action>> actions = Lists.newArrayList(currentAction.entrySet());

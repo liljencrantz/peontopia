@@ -36,7 +36,7 @@ public class PeonSimulatorTest {
     peon.rest(0);
     Action reply = w -> true;
     when(actions.die(peon)).thenReturn(reply);
-    assertEquals(simulator.step(world, peon), reply);
+    assertEquals(simulator.action(world, peon), reply);
   }
 
   @Test
@@ -44,7 +44,7 @@ public class PeonSimulatorTest {
     peon.food(0);
     Action reply = w -> true;
     when(actions.die(peon)).thenReturn(reply);
-    assertEquals(simulator.step(world, peon), reply);
+    assertEquals(simulator.action(world, peon), reply);
   }
 
   @Test
@@ -52,7 +52,7 @@ public class PeonSimulatorTest {
     peon.food(40);
     Action reply = w -> true;
     when(actions.eat(peon)).thenReturn(reply);
-    assertEquals(simulator.step(world, peon), reply);
+    assertEquals(simulator.action(world, peon), reply);
   }
 
   @Test
@@ -66,12 +66,12 @@ public class PeonSimulatorTest {
     when(actions.work(peon)).thenReturn(reply2);
     when(actions.chores(peon)).thenReturn(reply3);
     when(actions.play(peon)).thenReturn(reply4);
-    assertEquals(simulator.step(world, peon), reply1);
-    assertEquals(simulator.step(world, peon), reply2);
-    assertEquals(simulator.step(world, peon), reply3);
-    assertEquals(simulator.step(world, peon), reply4);
-    assertEquals(simulator.step(world, peon), reply4);
-    assertEquals(simulator.step(world, peon), reply4);
+    assertEquals(simulator.action(world, peon), reply1);
+    assertEquals(simulator.action(world, peon), reply2);
+    assertEquals(simulator.action(world, peon), reply3);
+    assertEquals(simulator.action(world, peon), reply4);
+    assertEquals(simulator.action(world, peon), reply4);
+    assertEquals(simulator.action(world, peon), reply4);
   }
 
 }

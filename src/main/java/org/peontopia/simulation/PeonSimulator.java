@@ -1,5 +1,6 @@
 package org.peontopia.simulation;
 
+import org.peontopia.models.Actor;
 import org.peontopia.models.Peon;
 import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
@@ -7,11 +8,13 @@ import org.peontopia.simulation.actions.Action;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.peontopia.simulation.actions.Action.combine;
+
 /**
  * Class to keep state for the peon AI as well as wire together all different AI components into
  * a whole simulation.
  */
-public class PeonSimulator {
+public class PeonSimulator implements ActorSimulator{
 
   private final Map<Long, Data> allData = new HashMap<>();
   private final Action.PeonActions actions;
@@ -22,7 +25,11 @@ public class PeonSimulator {
     this.actions = actions;
   }
 
-  public Action step(World world, Peon peon) {
+  public Action step(World world, Actor peon) {
+    return combine(actions.age((Peon)peon), action(world, (Peon)peon));
+  }
+
+  public Action action(World world, Peon peon) {
 
     /* First check if we should be dead */
     if (peon.food() <= 0) {
