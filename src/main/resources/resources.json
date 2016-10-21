@@ -18,7 +18,7 @@
       "renewable": true
     },
     {
-      "name": "Ore",
+      "name": "Iron ore",
       "availability": 2
     },
     {
@@ -38,7 +38,7 @@
     },
     {
       "name": "Coal",
-      "availability": 2,
+      "availability": 3,
       "speed": 4
     },
     {
@@ -59,14 +59,14 @@
       "speed": 2
     },
     {
-      "name": "Gold",
+      "name": "Gold ore",
       "availability": 1,
       "speed": 2
     },
     {
-      "name": "Diamonds",
+      "name": "Uncut diamonds",
       "availability": 0,
-      "speed": 1
+      "speed": 0
     },
     {
       "name": "Sand",
@@ -83,7 +83,17 @@
     {
       "name": "Metal",
       "speed": 4,
-      "ingredients": [{"name":"Ore", "amount": 10}]
+      "ingredients": [{"name":"Iron ore", "amount": 5}]
+    },
+    {
+      "name": "Gold",
+      "speed": 4,
+      "ingredients": [{"name":"Gold ore", "amount": 5}]
+    },
+    {
+      "name": "Diamonds",
+      "speed": 1,
+      "ingredients": [{"name":"Uncut diamonds", "amount": 2}]
     },
     {
       "name": "Semiconductor",
@@ -134,20 +144,85 @@
       "speed": 4,
       "ingredients": [{"name":"Clay", "amount": 2}]
     },
+    {
+      "name": "Glass",
+      "speed": 2,
+      "ingredients": [{"name":"Sand", "amount": 2}]
+    },
+    {
+      "name": "Fabric",
+      "speed": 4,
+      "ingredients": [{"name":"Cotton", "amount": 1}, {"name":"Paint", "amount": 0.1}]
+    },
+    {
+      "name": "Herb extracts",
+      "speed": 2,
+      "ingredients": [{"name":"Herbs", "amount": 5},{"name":"Solvent", "amount": 0.1}]
+    },
+    {
+      "name": "Motor",
+      "speed": 2,
+      "ingredients": [{"name":"Metal", "amount": 1}]
+    },
 
     // Consumable resources
     {
       "name": "Bed",
-      "class":"furniture",
+      "class":"Furniture",
       "speed": 4,
       "ingredients": [{"name":"Wood"},{"name":"Paint", "amount": 0.1},{"name":"Metal", "amount": 0.1}]
     },
     {
-      "name": "Jewelry",
-      "class":"jewlery",
+      "name": "Carpet",
+      "class":"Furniture",
+      "ingredients": [{"name":"Fabric"}]
+    },
+    {
+      "name": "Bracelets",
+      "class":"Jewlery",
+      "speed": 1,
+      "ingredients": [{"name":"Gold"},{"name":"Diamonds", "amount": 0.1}]
+    },
+    {
+      "name": "Rings",
+      "class":"Jewlery",
       "speed": 1,
       "ingredients": [{"name":"Gold"},{"name":"Diamonds", "amount": 0.2}]
+    },
+    {
+      "name": "Bread",
+      "class":"Food",
+      "speed": 3,
+      "ingredients": [{"name":"Grain"}]
+    },
+    {
+      "name": "Steak",
+      "class":"Food",
+      "speed": 2,
+      "ingredients": [{"name":"Animals"}]
+    },
+    {
+      "name": "Electronics",
+      "class":"Electronics",
+      "speed": 2,
+      "ingredients": [{"name":"Electronic circuts"}, {"name":"Plastic"}]
+    },
+    {
+      "name": "Clothes",
+      "class":"Clothes",
+      "speed": 2,
+      "ingredients": [{"name":"Fabric"}]
+    },
+    {
+      "name": "Medicine",
+      "class":"Medicine",
+      "speed": 2,
+      "ingredients": [{"name":"Herb extracts"}]
     }
+
+ //   Horse and carriage (Metal, Wood, Steel wheels)
+ //   Horseless carriage (Motor, Metal, Glass, Rubber wheels)
+ //   Car (Motor, Metal, Glass, Plastic, Wheels, Electronic circuits)
 
   ]
 }

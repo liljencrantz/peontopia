@@ -7,6 +7,9 @@ import java.util.Collection;
  */
 public class Resource {
 
+  public static final int MAX_AVAILABILITY = 5;
+  public static final int MAX_SPEED = 5;
+
   private final Collection<Ingredient> ingredients;
   private final String name;
   private final int availability;
