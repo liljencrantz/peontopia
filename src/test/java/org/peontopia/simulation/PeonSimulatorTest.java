@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by axel on 18/10/16.
+ * Unit tests for PeonSimulator
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PeonSimulatorTest {
@@ -32,7 +32,7 @@ public class PeonSimulatorTest {
   }
 
   @Test
-  public void testDieFromNotSleeping() {
+  public void testDiaFromDieFromExhaustion() {
     peon.rest(0);
     Action reply = w -> true;
     when(actions.die(peon)).thenReturn(reply);
@@ -40,7 +40,7 @@ public class PeonSimulatorTest {
   }
 
   @Test
-  public void testDieFromNotEating() {
+  public void testThatPeonsDieFromNotStarvation() {
     peon.food(0);
     Action reply = w -> true;
     when(actions.die(peon)).thenReturn(reply);

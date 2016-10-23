@@ -78,7 +78,7 @@
     {
       "name": "Concrete",
       "speed": 5,
-      "ingredients": [{"name":"Cement", "amount": 0.5},{"name":"Stone", "amount": 0.5}]
+      "ingredients": [{"name":"Cement", "amount": 0.5},{"name":"Sand", "amount": 0.5}]
     },
     {
       "name": "Metal",

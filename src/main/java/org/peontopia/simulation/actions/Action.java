@@ -1,5 +1,6 @@
 package org.peontopia.simulation.actions;
 
+import org.peontopia.models.Factory;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Peon;
 
@@ -127,6 +128,13 @@ public interface Action {
 
     public Action play(Peon p) {
       return world -> true;
+    }
+  }
+
+  class FactoryActions {
+
+    public Action bankrupt(Factory f) {
+      return world -> {world.removeFactory(f.id()); return true;};
     }
   }
 }

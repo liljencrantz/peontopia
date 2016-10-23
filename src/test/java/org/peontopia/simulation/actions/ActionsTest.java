@@ -7,7 +7,7 @@ import static org.peontopia.simulation.actions.Action.compose;
 import static org.peontopia.simulation.actions.Action.delay;
 
 /**
- * Created by axel on 17/10/16.
+ * Unit tests for actions
  */
 public class ActionsTest {
 

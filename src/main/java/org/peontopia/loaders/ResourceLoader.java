@@ -1,12 +1,14 @@
 package org.peontopia.loaders;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import com.google.protobuf.util.JsonFormat;
 
 import org.peontopia.models.Resource;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -72,4 +74,5 @@ public class ResourceLoader {
         template.getClass_(),
         ingredients));
   }
+
 }

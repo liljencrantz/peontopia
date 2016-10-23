@@ -18,6 +18,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Created by axel on 15/10/16.
  */
@@ -135,10 +138,10 @@ public class MutableWorld implements World {
     return new MutableStore(x, y);
   }
 
-  public MutableFactory addFactory(int x, int y) {
+  public MutableFactory addFactory(int x, int y, Resource resource) {
     check.check();
     checkCoordinate(x, y);
-    return new MutableFactory(x, y);
+    return new MutableFactory(x, y, resource);
   }
 
   private void checkCoordinate(int x, int y) {
@@ -187,6 +190,13 @@ public class MutableWorld implements World {
       throw new InputMismatchException();
     time += dt;
 
+    return this;
+  }
+
+  public MutableWorld removeFactory(long id) {
+    Factory f = factory(id);
+    tile(f.x(), f.y()).building = Optional.empty();
+    actors.remove(id);
     return this;
   }
 
@@ -444,13 +454,52 @@ public class MutableWorld implements World {
 
   class MutableFactory extends MutableCompany implements Factory {
 
+    private final Map<String, Double> supply = new HashMap<>();
+    private final Resource resource;
+
     public MutableFactory(Factory b) {
       super(b);
+      resource = b.resource();
+      supply.put(resource.name(), b.supply(resource));
+      resource
+          .ingredients()
+          .stream()
+          .forEach(
+              ingredient -> supply.put(
+                  ingredient.resource().name(),
+                  b.supply(ingredient.resource())));
     }
 
-    public MutableFactory(int x, int y) {
+    public MutableFactory(int x, int y, Resource resource) {
       super(x, y);
+      checkNotNull(resource);
+      this.resource = resource;
+      supply.put(resource.name(), 0.0);
+      resource
+          .ingredients()
+          .stream()
+          .forEach(ingredient -> supply.put(ingredient.resource().name(), 0.0));
     }
+
+    @Override
+    public Resource resource() {
+      return resource;
+    }
+
+    @Override
+    public double supply(Resource r) {
+      return supply.get(r.name());
+    }
+
+    MutableFactory addToSupply(Resource r, double amount) {
+      check.check();
+      double current = supply.get(r.name());
+      double updated = current + amount;
+      checkArgument(updated >= 0.0);
+      supply.put(r.name(), updated);
+      return this;
+    }
+
   }
 
   class MutableStore extends MutableCompany implements Store {

@@ -3,8 +3,6 @@ package org.peontopia.simulation.analysis;
 import org.peontopia.models.Resource;
 import org.peontopia.models.World;
 
-import sun.security.x509.AVA;
-
 import java.util.HashMap;
 import java.util.Map;
 

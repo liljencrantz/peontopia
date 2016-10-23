@@ -14,14 +14,17 @@ public class ResourceLoaderTest {
 
   ResourceLoader loader = new ResourceLoader();
 
+  public static final String testResourceData = "{\"resources\":[" +
+      "{\"name\":\"Coal\",\"speed\":5,\"availability\":4,\"renewable\":true,\"class\":\"food\"},"+
+      "{\"name\":\"Diamond\",\"speed\":1,\"ingredients\":[{\"name\":\"Coal\",\"amount\":1000}]},"+
+      "{\"name\":\"Clay\"}"+
+      "]}";
+
   @Test
   public void testSimpleString() {
-    Map<String, Resource> res = loader.load(
-        "{\"resources\":[" +
-            "{\"name\":\"Coal\",\"speed\":5,\"availability\":4,\"renewable\":true,\"class\":\"food\"},"+
-            "{\"name\":\"Diamond\",\"ingredients\":[{\"name\":\"Coal\",\"amount\":1000}]}]}");
+    Map<String, Resource> res = loader.load(testResourceData);
 
-    assertEquals(res.size(), 2);
+    assertEquals(res.size(), 3);
 
     assertEquals(res.get("Coal").speed(), 5);
     assertEquals(res.get("Coal").availability(), 4);

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by axel on 16/10/16.
+ * Unit tests for Simulator
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SimulationTest {

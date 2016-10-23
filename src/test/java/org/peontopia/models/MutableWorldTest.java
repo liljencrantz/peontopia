@@ -5,16 +5,25 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.peontopia.collections.ModifyFrozenException;
+import org.peontopia.loaders.ResourceLoader;
+import org.peontopia.loaders.ResourceLoaderTest;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class WorldTest {
+/**
+ * Unit tests for MutableWorld
+ */
+public class MutableWorldTest {
 
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
   MutableWorld world;
-  
+  Map<String, Resource> resources =
+      new ResourceLoader().load(ResourceLoaderTest.testResourceData);
+
   @Before
   public void setUp() {
     world = new MutableWorld(2, 2);
@@ -29,7 +38,7 @@ public class WorldTest {
 
   @Test
   public void testAddFactory() {
-    world.addFactory(1,1);
+    world.addFactory(1,1,resources.get("Diamond"));
     assertEquals(1, world.actors().size());
   }
 
@@ -62,7 +71,7 @@ public class WorldTest {
   @Test
   public void testAddBuildingToBadLocation() {
     exception.expect(IndexOutOfBoundsException.class);
-    world.addFactory(3, 0);
+    world.addFactory(3, 0, resources.get("Diamond"));
   }
 
   @Test
@@ -89,7 +98,7 @@ public class WorldTest {
   @Test
   public void testIdConsistentOnCopy() {
     long pid = world.addPeon(1, 1).id();
-    long fid = world.addFactory(0,0).id();
+    long fid = world.addFactory(0, 0, resources.get("Diamond")).id();
     long sid = world.addStore(0, 1).id();
 
     assertEquals(pid, world.peon(pid).id());
