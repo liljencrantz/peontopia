@@ -3,10 +3,15 @@ package org.peontopia.simulation.actions;
 import org.peontopia.models.Factory;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Peon;
+import org.peontopia.models.Resource;
+import org.peontopia.models.World;
+import org.peontopia.simulation.MarketSimulator;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
@@ -21,6 +26,12 @@ public interface Action {
    * Create single action object that executes multiple actions in order
    */
   static Action compose(Action... actions) {
+    return compose(newArrayList(actions));
+  }
+
+  static Action compose(List<Action> actions) {
+    if (actions.isEmpty())
+      throw new IllegalArgumentException();
     List<Action> a = newArrayList(actions);
     return world -> {
       if (a.get(0).apply(world)) {
@@ -135,6 +146,28 @@ public interface Action {
 
     public Action bankrupt(Factory f) {
       return world -> {world.removeFactory(f.id()); return true;};
+    }
+
+    public Action purchase(MarketSimulator market, Factory f, Resource r, double amount){
+      checkState(amount > 0);
+      return world -> {
+        MutableWorld.MutableFactory factory = world.factory(f.id());
+        double price = market.buyingPrice(r)*amount;
+        factory.addMoney(-(int)Math.ceil(price));
+        factory.addToSupply(r, amount);
+        return true;
+      };
+    }
+
+    public Action sell(MarketSimulator market, Factory f, double amount) {
+      checkState(amount > 0);
+      return world -> {
+        MutableWorld.MutableFactory factory = world.factory(f.id());
+        double price = market.sellingPrice(f.resource())*amount;
+        factory.addMoney((int)Math.ceil(price));
+        factory.addToSupply(f.resource(), -amount);
+        return true;
+      };
     }
   }
 }

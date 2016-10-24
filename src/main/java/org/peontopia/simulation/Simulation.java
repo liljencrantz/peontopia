@@ -13,25 +13,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The main glue that binds all the pieces of the simulation (peon ai, company ai, water, power,
- * etc) together
+ * The coordination that locks all the pieces of the simulation (peon ai, company ai, water, power,
+ * etc) together in the correct way
  */
 public class Simulation {
 
-  private World world;
+  private MutableWorld world;
   private final ActorMapper<ActorSimulator> actorSimulator;
   private final Map<Long, Action> currentAction = new HashMap<>();
   private final MarketSimulator marketSimulator;
 
   public Simulation(World world, ActorMapper<ActorSimulator> actorSimulator, MarketSimulator marketSimulator) {
-    this.world = world;
+    this.world = MutableWorld.thaw(world);
     this.actorSimulator = actorSimulator;
     this.marketSimulator = marketSimulator;
   }
 
   public World step() {
     marketSimulator.step();
-    MutableWorld nextWorld = MutableWorld.thaw(world);
 
     world.actors().stream()
         .filter(p -> !currentAction.containsKey(p.id()))
@@ -49,13 +48,12 @@ public class Simulation {
 
     actions.stream()
         .forEach(a -> {
-          if(a.getValue().apply(nextWorld))
+          if(a.getValue().apply(world))
             currentAction.remove(a.getKey());
         });
 
-    nextWorld.addTime(1);
-    world = nextWorld;
-    return nextWorld.freeze();
+    world.addTime(1);
+    return world;
   }
 
 }

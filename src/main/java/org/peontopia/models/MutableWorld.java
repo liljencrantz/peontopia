@@ -441,6 +441,11 @@ public class MutableWorld implements World {
     }
 
     @Override
+    public int level() {
+      return 1;
+    }
+
+    @Override
     public int money() {
       return money;
     }
@@ -452,7 +457,7 @@ public class MutableWorld implements World {
     }
   }
 
-  class MutableFactory extends MutableCompany implements Factory {
+  public class MutableFactory extends MutableCompany implements Factory {
 
     private final Map<String, Double> supply = new HashMap<>();
     private final Resource resource;
@@ -491,7 +496,7 @@ public class MutableWorld implements World {
       return supply.get(r.name());
     }
 
-    MutableFactory addToSupply(Resource r, double amount) {
+    public MutableFactory addToSupply(Resource r, double amount) {
       check.check();
       double current = supply.get(r.name());
       double updated = current + amount;

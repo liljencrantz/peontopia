@@ -6,4 +6,5 @@ package org.peontopia.models;
 public interface Building extends Actor {
   int x();
   int y();
+  int level();
 }
