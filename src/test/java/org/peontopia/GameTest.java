@@ -1,6 +1,7 @@
 package org.peontopia;
 
 import org.junit.Test;
+import org.peontopia.models.MutableWorld;
 import org.peontopia.simulation.Simulation;
 
 import java.io.IOException;
@@ -13,8 +14,12 @@ public class GameTest {
   @Test
   public void test() throws IOException {
     Simulation s = Game.create(1000, 1000);
-    for (int i=0; i<1000; i++) {
+    MutableWorld world = s.world();
+
+    for (long i=0; i<20000l; i++) {
       s.step();
     }
+    System.err.println("Done all steps");
+
   }
 }

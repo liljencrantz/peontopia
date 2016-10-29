@@ -34,44 +34,44 @@ public class PeonSimulatorTest {
   @Test
   public void testDiaFromDieFromExhaustion() {
     peon.rest(0);
-    Action reply = w -> true;
+    Action reply = () -> true;
     when(actions.die(peon)).thenReturn(reply);
-    assertEquals(simulator.action(world, peon), reply);
+    assertEquals(simulator.action(peon), reply);
   }
 
   @Test
   public void testThatPeonsDieFromNotStarvation() {
     peon.food(0);
-    Action reply = w -> true;
+    Action reply = () -> true;
     when(actions.die(peon)).thenReturn(reply);
-    assertEquals(simulator.action(world, peon), reply);
+    assertEquals(simulator.action(peon), reply);
   }
 
   @Test
   public void testThatWeEatWhenWeAreHungry() {
     peon.food(40);
-    Action reply = w -> true;
+    Action reply = () -> true;
     when(actions.eat(peon)).thenReturn(reply);
-    assertEquals(simulator.action(world, peon), reply);
+    assertEquals(simulator.action(peon), reply);
   }
 
   @Test
   public void testThatOurLifeConsistsOfSleepWorkChoresPlayPlayPlayInThatOrder() {
-    Action reply1 = w -> true;
-    Action reply2 = w -> true;
-    Action reply3 = w -> true;
-    Action reply4 = w -> true;
+    Action reply1 = () -> true;
+    Action reply2 = () -> true;
+    Action reply3 = () -> true;
+    Action reply4 = () -> true;
 
     when(actions.sleep(peon)).thenReturn(reply1);
     when(actions.work(peon)).thenReturn(reply2);
     when(actions.chores(peon)).thenReturn(reply3);
     when(actions.play(peon)).thenReturn(reply4);
-    assertEquals(simulator.action(world, peon), reply1);
-    assertEquals(simulator.action(world, peon), reply2);
-    assertEquals(simulator.action(world, peon), reply3);
-    assertEquals(simulator.action(world, peon), reply4);
-    assertEquals(simulator.action(world, peon), reply4);
-    assertEquals(simulator.action(world, peon), reply4);
+    assertEquals(simulator.action(peon), reply1);
+    assertEquals(simulator.action(peon), reply2);
+    assertEquals(simulator.action(peon), reply3);
+    assertEquals(simulator.action(peon), reply4);
+    assertEquals(simulator.action(peon), reply4);
+    assertEquals(simulator.action(peon), reply4);
   }
 
 }

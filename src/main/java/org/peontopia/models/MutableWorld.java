@@ -1,6 +1,7 @@
 package org.peontopia.models;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import org.peontopia.collections.FreezeCheck;
 import org.peontopia.collections.ModifyFrozenException;
@@ -20,6 +21,7 @@ import java.util.stream.IntStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.peontopia.limits.FactoryLimits.workerCount;
 
 /**
  * Created by axel on 15/10/16.
@@ -77,14 +79,6 @@ public class MutableWorld implements World {
     throw new RuntimeException("Unknown actor type " + a.getClass().toString());
   }
 
-  public MutableFactory thawBuilding(Factory f) {
-    return new MutableFactory(f);
-  }
-
-  public MutableStore thawCompany(Store f) {
-    return new MutableStore(f);
-  }
-
   public boolean frozen() {
     return frozen;
   }
@@ -123,13 +117,6 @@ public class MutableWorld implements World {
     check.check();
     checkCoordinate(x, y);
     return new MutablePeon(x, y);
-  }
-
-  public MutableWorld removePeon(long id) {
-    MutablePeon peon = peon(id);
-    actors.remove(id);
-    peon.tile().peons.remove(peon);
-    return this;
   }
 
   public MutableStore addStore(int x, int y) {
@@ -186,17 +173,12 @@ public class MutableWorld implements World {
   }
 
   public MutableWorld addTime(int dt) {
+
+    /** We do not support time travel */
     if (dt < 0)
       throw new InputMismatchException();
     time += dt;
 
-    return this;
-  }
-
-  public MutableWorld removeFactory(long id) {
-    Factory f = factory(id);
-    tile(f.x(), f.y()).building = Optional.empty();
-    actors.remove(id);
     return this;
   }
 
@@ -227,7 +209,13 @@ public class MutableWorld implements World {
     }
   }
 
-  public class MutablePeon implements Peon {
+  public class MutableActor {
+    public MutableWorld world() {
+      return MutableWorld.this;
+    }
+  }
+
+  public class MutablePeon extends MutableActor implements Peon {
 
     private long id;
     private String name;
@@ -238,6 +226,20 @@ public class MutableWorld implements World {
     private int x;
     private int y;
 
+    private Education education;
+
+    public MutablePeon employer(MutableCompany employer) {
+      this.employer = Optional.of(employer);
+      return this;
+    }
+
+    public MutablePeon removeEmployer() {
+      this.employer = Optional.empty();
+      return this;
+    }
+
+    Optional<MutableCompany> employer;
+
     public MutablePeon(Peon p) {
       this.id = p.id();
       this.name = p.name();
@@ -247,6 +249,7 @@ public class MutableWorld implements World {
       this.rest = p.rest();
       this.food = p.food();
       this.happiness = p.happiness();
+      this.education = p.education();
 
       actors.put(id(), this);
       MutableWorld.this.tile(x, y).peons.add(this);
@@ -261,9 +264,16 @@ public class MutableWorld implements World {
       this.rest = MAX_REST;
       this.food = MAX_FOOD;
       this.happiness = 0;
+      this.education = Education.NONE;
+      this.employer = Optional.empty();
 
       actors.put(id(), this);
       MutableWorld.this.tile(x, y).peons.add(this);
+    }
+
+    public void remove() {
+      actors.remove(this.id());
+      tile().peons.remove(this);
     }
 
     @Override
@@ -342,7 +352,7 @@ public class MutableWorld implements World {
 
     public MutablePeon addFood(int v) {
       check.check();
-      food += v;
+      food = Math.max(0, Math.min(food + v, MAX_FOOD));
       return this;
     }
 
@@ -375,6 +385,21 @@ public class MutableWorld implements World {
     }
 
     @Override
+    public Education education() {
+      return education;
+    }
+
+    public MutablePeon education(Education education) {
+      this.education = education;
+      return this;
+    }
+
+    @Override
+    public Optional<MutableCompany> employer() {
+      return employer;
+    }
+
+    @Override
     public MutableTile tile() {
       return MutableWorld.this.tile(x(), y());
     }
@@ -400,11 +425,12 @@ public class MutableWorld implements World {
 
   }
 
-  class MutableCompany implements Company {
+  public abstract class MutableCompany extends MutableActor implements Company {
     private long id;
     private int x;
     private int y;
     private int money;
+    private Set<Peon> employees = new HashSet<>();
 
     public MutableCompany(Company b) {
       this.id = b.id();
@@ -450,11 +476,23 @@ public class MutableWorld implements World {
       return money;
     }
 
+    @Override
+    public Collection<Peon> employees() {
+      return ImmutableSet.copyOf(employees);
+    }
+
+    public MutableCompany addEmployee(MutablePeon p) {
+      employees.add(p);
+      p.employer(this);
+      return this;
+    }
+
     public MutableCompany addMoney(int v) {
       check.check();
       money += v;
       return this;
     }
+
   }
 
   public class MutableFactory extends MutableCompany implements Factory {
@@ -486,6 +524,11 @@ public class MutableWorld implements World {
           .forEach(ingredient -> supply.put(ingredient.resource().name(), 0.0));
     }
 
+    public void remove() {
+      tile(x(), y()).building = Optional.empty();
+      actors.remove(this);
+    }
+
     @Override
     public Resource resource() {
       return resource;
@@ -505,6 +548,10 @@ public class MutableWorld implements World {
       return this;
     }
 
+    @Override
+    public int employeeOpenings(Education education) {
+        return education==Education.NONE ? workerCount(resource(), level()) : 0;
+    }
   }
 
   class MutableStore extends MutableCompany implements Store {
@@ -515,6 +562,11 @@ public class MutableWorld implements World {
 
     public MutableStore(int x, int y) {
       super(x, y);
+    }
+
+    @Override
+    public int employeeOpenings(Education education) {
+      return 0;
     }
 
   }

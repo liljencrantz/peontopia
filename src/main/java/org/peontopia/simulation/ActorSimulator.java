@@ -8,5 +8,5 @@ import org.peontopia.simulation.actions.Action;
  * Created by axel on 21/10/16.
  */
 public interface ActorSimulator {
-  Action step(World w, Actor a);
+  Action step(Actor a);
 }

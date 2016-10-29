@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Math.pow;
+import static org.peontopia.limits.FactoryLimits.calculateWorkerThroughput;
 
 /**
  * Analyse Resources, including estimating fair market value of a resource given current salaries
@@ -62,7 +63,7 @@ public class ResourceAnalysis {
          * pow(AVAILABILITY_EXPONENT, Resource.MAX_AVAILABILITY-r.availability());
     }
 
-    double timePerUnit = 1.0 / factoryAnalysis.calculateWorkerThroughput(r, level);
+    double timePerUnit = 1.0 / calculateWorkerThroughput(r, level);
     salaryCost = timePerUnit * salaryAnalysis.baseDailySalary(level)/ World.TICKS_IN_DAY;
 
     double value = (ingredientCost + salaryCost + scarcityCost) * (1.0 + OVERHEAD + PROFIT_MARGIN);

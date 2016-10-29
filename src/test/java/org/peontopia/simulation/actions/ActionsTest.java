@@ -13,12 +13,12 @@ public class ActionsTest {
 
   private Action repeatedAction(int times) {
     if (times == 1)
-      return world -> true;
-    return compose(world -> true, repeatedAction(times - 1));
+      return () -> true;
+    return compose(() -> true, repeatedAction(times - 1));
   }
 
   private int actionCount(Action a) {
-    return a.apply(null) ? 1 : 1 + actionCount(a);
+    return a.apply() ? 1 : 1 + actionCount(a);
   }
 
   @Test

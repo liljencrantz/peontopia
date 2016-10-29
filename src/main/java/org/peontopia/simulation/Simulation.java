@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 
 import org.peontopia.models.ActorMapper;
 import org.peontopia.models.MutableWorld;
-import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
 
 import java.util.Collections;
@@ -23,37 +22,45 @@ public class Simulation {
   private final Map<Long, Action> currentAction = new HashMap<>();
   private final MarketSimulator marketSimulator;
 
-  public Simulation(World world, ActorMapper<ActorSimulator> actorSimulator, MarketSimulator marketSimulator) {
-    this.world = MutableWorld.thaw(world);
+  public Simulation(
+      MutableWorld world,
+      ActorMapper<ActorSimulator> actorSimulator,
+      MarketSimulator marketSimulator) {
+    this.world = world;
     this.actorSimulator = actorSimulator;
     this.marketSimulator = marketSimulator;
   }
 
-  public World step() {
+  public Simulation step() {
     marketSimulator.step();
 
     world.actors().stream()
         .filter(p -> !currentAction.containsKey(p.id()))
         .forEach(actor -> {
-            Action a = actorSimulator.get(actor).step(world, actor);
+          ActorSimulator sim = actorSimulator.get(actor);
+            Action a = sim.step(actor);
             if (a == null) {
-              throw new RuntimeException("PeonSimulator returned null");
+              throw new RuntimeException("Simulator " + sim + " returned null");
             }
             currentAction.put(actor.id(), a);
         });
 
     List<Map.Entry<Long, Action>> actions = Lists.newArrayList(currentAction.entrySet());
-
     Collections.shuffle(actions);
 
+    /* Let the mutations begin! */
+
+    world.addTime(1);
     actions.stream()
         .forEach(a -> {
-          if(a.getValue().apply(world))
+          if(a.getValue().apply())
             currentAction.remove(a.getKey());
         });
 
-    world.addTime(1);
-    return world;
+    return this;
   }
 
+  public MutableWorld world() {
+    return world;
+  }
 }

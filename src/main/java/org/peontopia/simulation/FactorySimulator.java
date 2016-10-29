@@ -2,6 +2,7 @@ package org.peontopia.simulation;
 
 import org.peontopia.models.Actor;
 import org.peontopia.models.Factory;
+import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Resource;
 import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
@@ -10,6 +11,7 @@ import org.peontopia.simulation.analysis.FactoryAnalysis;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.peontopia.limits.FactoryLimits.calculateFactoryThroughput;
 import static org.peontopia.simulation.actions.Action.delay;
 
 /**
@@ -34,12 +36,12 @@ public class FactorySimulator implements ActorSimulator {
   }
 
   @Override
-  public Action step(World w, Actor a) {
-    return step(w, (Factory) a);
+  public Action step(Actor a) {
+    return step((MutableWorld.MutableFactory) a);
   }
 
   private double weeklyProduction(Factory factory) {
-    return analysis.calculateFactoryThroughput(factory.resource(), factory.level()) *
+    return calculateFactoryThroughput(factory.resource(), factory.level()) *
         World.TICKS_IN_DAY * 7;
   }
 
@@ -47,7 +49,7 @@ public class FactorySimulator implements ActorSimulator {
     return weeklyProduction(factory) * ingredient.amount();
   }
 
-  public Action step(World w, Factory f) {
+  public Action step(MutableWorld.MutableFactory f) {
     if (f.money() < 0)
       return actions.bankrupt(f);
 
@@ -72,7 +74,7 @@ public class FactorySimulator implements ActorSimulator {
     }
 
     // Do nothing for one day
-    return delay(world -> true, World.TICKS_IN_DAY);
+    return delay(() -> true, World.TICKS_IN_DAY);
   }
 
 }

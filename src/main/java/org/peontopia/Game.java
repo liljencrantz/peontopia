@@ -1,11 +1,9 @@
 package org.peontopia;
 
 import org.peontopia.loaders.ResourceLoader;
-import org.peontopia.models.Actor;
 import org.peontopia.models.ActorMapper;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Resource;
-import org.peontopia.models.World;
 import org.peontopia.simulation.ActorSimulator;
 import org.peontopia.simulation.FactorySimulator;
 import org.peontopia.simulation.MarketSimulator;
@@ -49,8 +47,11 @@ public class Game {
     ActorMapper<ActorSimulator> actorSimulator = ActorMapper.<ActorSimulator>builder()
         .factory(new FactorySimulator(new Action.FactoryActions(), factoryAnalysis, marketSimulator))
         .peon(new PeonSimulator(new Action.PeonActions()))
-        .store((w1, a) -> w2 -> true)
+        .store((a) -> () -> true)
         .build();
+
+    world.addPeon(3,3);
+    world.addFactory(5,5, resources.get("Glass"));
 
     return new Simulation(
         world,

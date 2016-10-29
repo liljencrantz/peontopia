@@ -7,6 +7,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.peontopia.models.Actor;
 import org.peontopia.models.ActorMapper;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Peon;
@@ -44,56 +45,54 @@ public class SimulationTest {
     simulation = new Simulation(
         world,
         ActorMapper.<ActorSimulator>builder()
-            .store((w, a) -> (ww -> true))
-            .factory((w, a) -> (ww -> true))
+            .store(a -> () -> true)
+            .factory(a -> () -> true)
             .peon(peonSimulator).build() , marketSimulator);
     actions = new Action.PeonActions();
   }
 
   @Test
   public void testMovePeonAbsolute() {
-    when(peonSimulator.step(world, peon)).thenReturn(actions.setCoord(peon, 2, 2));
-    World newWorld = simulation.step();
-    assertEquals(1, newWorld.tile(2, 2).peons().size());
+    when(peonSimulator.step(peon)).thenReturn(actions.setCoord(peon, 2, 2));
+    simulation.step();
+    assertEquals(1, world.tile(2, 2).peons().size());
   }
 
   @Test
   public void testMovePeonRelative() {
-    when(peonSimulator.step(world, peon)).thenReturn(actions.move(peon, -1, 1));
-    World newWorld = simulation.step();
-    assertEquals(1, newWorld.tile(0, 2).peons().size());
+    when(peonSimulator.step(peon)).thenReturn(actions.move(peon, -1, 1));
+    simulation.step();
+    assertEquals(1, world.tile(0, 2).peons().size());
   }
 
   @Test
   public void testMultiStepActionsTakeCorrectNumberOfTurnsToExecute() {
-    when(peonSimulator.step(any(World.class), any(Peon.class)))
-        .thenAnswer(i -> Action.compose(w -> true, w -> true, w -> true));
+    when(peonSimulator.step(peon))
+        .thenAnswer(i -> Action.compose(() -> true, () -> true, () -> true));
     for (int i=0; i < 12; i++) {
       simulation.step();
     }
-    verify(peonSimulator, times(4)).step(any(World.class), any(Peon.class));
+    verify(peonSimulator, times(4)).step(any(Peon.class));
   }
 
   @Test
   public void testPassageOfTime() {
-    when(peonSimulator.step(any(World.class), any(Peon.class)))
-        .thenAnswer(i -> Action.compose(w -> true));
-    World w = null;
+    when(peonSimulator.step(peon))
+        .thenAnswer(i -> Action.compose(() -> true));
     for (int i=0; i < 12; i++) {
-      w = simulation.step();
+      simulation.step();
     }
-    assertEquals(12, w.time());
+    assertEquals(12, world.time());
   }
 
   @Test
   public void testMultipleSimulationSteps() {
-    World w = world;
-    when(peonSimulator.step(any(World.class), any(Peon.class)))
-        .thenAnswer(i -> actions.move(((World)i.getArguments()[0]).peon(peon.id()), 0, 1));
+    when(peonSimulator.step(peon))
+        .thenAnswer(i -> actions.move(peon, 0, 1));
     for (int i=0; i < 3; i++) {
-      w = simulation.step();
+      simulation.step();
     }
-    assertEquals(1, w.tile(1, 4).peons().size());
+    assertEquals(1, world.tile(1, 4).peons().size());
   }
 
 }
