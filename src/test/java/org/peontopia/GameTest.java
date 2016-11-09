@@ -2,9 +2,11 @@ package org.peontopia;
 
 import org.junit.Test;
 import org.peontopia.models.MutableWorld;
-import org.peontopia.simulation.Simulation;
+import org.peontopia.models.World;
 
 import java.io.IOException;
+
+import static java.lang.String.format;
 
 /**
  * Created by axel on 24/10/16.
@@ -13,13 +15,34 @@ public class GameTest {
 
   @Test
   public void test() throws IOException {
-    Simulation s = Game.create(1000, 1000);
+    Game s = Game.create(2000, 2000);
     MutableWorld world = s.world();
 
-    for (long i=0; i<20000l; i++) {
+    int peon = 0;
+    int factory = 0;
+
+
+    for (long i=0; i< World.TICKS_IN_DAY*40; i++) {
+      for (int j = 0; j< 100; j++) {
+        if (peon > 1000000)
+          break;
+        MutableWorld.MutablePeon pp = world.addPeon(peon / 1900, peon % 1900 + 20);
+        s.peonSimulator().simulate(pp, s);
+        peon++;
+
+      }
+
+      for (int j = 0; j< 10; j++) {
+        if (factory > 10000)
+          break;
+        MutableWorld.MutableFactory ff = world.addFactory(factory / 10, factory % 10, s.resources().get("Glass"));
+        s.factorySimulator().simulate(ff, s);
+        factory++;
+      }
+
       s.step();
+      System.err.println(format("Step %d, population %d", i, peon));
     }
     System.err.println("Done all steps");
-
   }
 }

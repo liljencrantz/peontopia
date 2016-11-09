@@ -10,7 +10,7 @@ import static java.lang.Math.pow;
  */
 public class FactoryLimits {
 
-  private static final int BASE_WORKER_COUNT = 4;
+  private static final int BASE_WORKER_COUNT = 40;
   private static final double EXPONENT_WORKER = 3;
 
   /** For every increment of speed in resource extraction/manufacturing, throughput goes up by this factor */

@@ -543,7 +543,7 @@ public class MutableWorld implements World {
       check.check();
       double current = supply.get(r.name());
       double updated = current + amount;
-      checkArgument(updated >= 0.0);
+//      checkArgument(updated >= 0.0);
       supply.put(r.name(), updated);
       return this;
     }

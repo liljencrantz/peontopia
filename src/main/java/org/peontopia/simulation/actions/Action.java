@@ -1,17 +1,20 @@
 package org.peontopia.simulation.actions;
 
-import org.peontopia.models.Factory;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.Peon;
 import org.peontopia.models.Resource;
+import org.peontopia.models.World;
+import org.peontopia.simulation.ActionScheduler;
 import org.peontopia.simulation.MarketSimulator;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
+import java.util.Random;
+import java.util.function.Supplier;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * These specific actions, like moving from A to B, buying some goods,
@@ -19,25 +22,48 @@ import static com.google.common.collect.Lists.newArrayList;
  * the game AI.
  */
 public interface Action {
-  boolean apply();
+
+  int delay();
+  Optional<Action> run();
+
+  static Action once(Runnable r) {
+    return new SimpleAction(() -> {r.run(); return Optional.empty();}, 0);
+  }
+
+  static Action once(Runnable r, int steps) {
+    return new SimpleAction(() -> {r.run(); return Optional.empty();}, steps);
+  }
+
+  static Action action(Supplier<Action> r) {
+    return new SimpleAction(() -> Optional.of(r.get()), 0);
+  }
+
+  static Action action(Supplier<Action> r, int steps) {
+    return new SimpleAction(() -> Optional.of(r.get()), steps);
+  }
+
+  static Action maybe(Supplier<Optional<Action>> r) {
+    return new SimpleAction(r, 0);
+  }
+
+  static Action maybe(Supplier<Optional<Action>> r, int steps) {
+    return new SimpleAction(r, steps);
+  }
 
   /**
    * Create single action object that executes multiple actions in order
    */
-  static Action compose(Action... actions) {
-    return compose(newArrayList(actions));
+  static Action then(Action first, Action second) {
+    return new CombinedAction(first, second);
   }
 
-  static Action compose(List<Action> actions) {
-    if (actions.isEmpty())
-      throw new IllegalArgumentException();
-    List<Action> a = newArrayList(actions);
-    return () -> {
-      if (a.get(0).apply()) {
-        a.remove(0);
-      }
-      return a.size() == 0;
-    };
+  static Action noop() {
+    return noop(0);
+  }
+
+  static Action noop(int steps) {
+    return once(() -> {
+    }, steps);
   }
 
   /**
@@ -45,7 +71,7 @@ public interface Action {
    * Warning: All actions are executed every time, even ones that have previously returned true.
    * Returns true once all actions return true.
    */
-  static Action combine(Action... actions) {
+/*  static Action combine(Action... actions) {
     List<Action> all = newArrayList(actions);
     return () -> {
       boolean done = true;
@@ -54,12 +80,12 @@ public interface Action {
       return done;
     };
   }
-
+*/
   /**
    * Create an action object that will do nothing for the specified number of steps and then begin
    * performing the specified action.
    */
-  static Action delay(Action action, int delayBy) {
+/*  static Action delay(Action action, int delayBy) {
     if (delayBy < 0)
       throw new IllegalArgumentException();
     AtomicInteger count = new AtomicInteger();
@@ -71,26 +97,25 @@ public interface Action {
       return false;
     };
   }
-
+*/
   /**
    * The building blocks for building the Peon AI
    */
   class PeonActions {
 
+    private Random random = new Random();
+
     /* Basic passage of time. Become more tired, more hungry, etc. */
     public Action age(MutableWorld.MutablePeon peon) {
-      return () -> {
-        peon.addRest(-1).addFood(-1);
-        return true;
-      };
+      return once(() -> peon.addRest(-1).addFood(-1));
     }
 
     public Action move(MutableWorld.MutablePeon p, int dx, int dy) {
-      return new PeonMove(p, dx, dy, true);
+      return PeonMove.move(p, dx, dy, true);
     }
 
     public Action setCoord(MutableWorld.MutablePeon p, int x, int y) {
-      return new PeonMove(p, x, y, false);
+      return PeonMove.move(p, x, y, false);
     }
 
     /**
@@ -100,7 +125,7 @@ public interface Action {
      * @return true
      */
     public Action die(MutableWorld.MutablePeon peon) {
-      return () -> { peon.remove(); return true;};
+      return once(() -> peon.remove());
     }
 
     /**
@@ -109,7 +134,10 @@ public interface Action {
      * @return true if this peon is fully rested and this action need not be applied again
      */
     public Action sleep(MutableWorld.MutablePeon peon) {
-      return () -> peon.addRest(3).rest() == Peon.MAX_REST;
+      final int SLEEP_REST_TICK = 3;
+      int steps = (Peon.MAX_REST-peon.rest())/SLEEP_REST_TICK + 1 + random.nextInt(5);
+      //System.out.println("Sleep for " + steps + " ticks");
+      return once(() -> peon.rest(Peon.MAX_REST), steps);
     }
 
     /**
@@ -118,14 +146,15 @@ public interface Action {
      * @return true if this peon cannot eat any more
      */
     public Action eat(MutableWorld.MutablePeon peon) {
-      return () -> {
         double price = 3;
+        int EAT_SPEED = 10;
+        int time = + random.nextInt(2) + peon.food()/EAT_SPEED;
+
         if(peon.money() < price)
-          return true;
-        peon.addMoney((int)-price);
-        System.err.println("MONEY " + peon.money());
-        return peon.addFood(10).food() == Peon.MAX_FOOD;
-      };
+          return noop();
+
+        System.out.println("Eat for " + time + " ticks");
+        return once(() -> peon.addMoney((int) -price).food(Peon.MAX_FOOD), time);
     }
 
     /**
@@ -135,42 +164,44 @@ public interface Action {
      * @return
      */
     public Action work(MutableWorld.MutablePeon p) {
-      return new PeonWork(p);
+      return PeonWork.create(p);
     }
 
     public Action chores(Peon p) {
-      return () -> true;
+      int time = World.TICKS_IN_DAY/10;
+  //    System.out.println("Chores for  " + time + " ticks");
+      return noop(time);
     }
 
     public Action play(Peon p) {
-      return () -> true;
+      int time = World.TICKS_IN_DAY/10;
+//      System.out.println("Play for  " + time + " ticks");
+      return noop(time);
     }
   }
 
   class FactoryActions {
 
     public Action bankrupt(MutableWorld.MutableFactory f) {
-      return () -> {f.remove(); return true;};
+      return once(() -> f.remove());
     }
 
     public Action purchase(MarketSimulator market, MutableWorld.MutableFactory factory, Resource r, double amount){
       checkState(amount > 0);
-      return () -> {
-        double price = market.buyingPrice(r)*amount;
-        factory.addMoney(-(int)Math.ceil(price));
+      return once(() -> {
+        double price = market.buyingPrice(r) * amount;
+        factory.addMoney(-(int) Math.ceil(price));
         factory.addToSupply(r, amount);
-        return true;
-      };
+      });
     }
 
     public Action sell(MarketSimulator market, MutableWorld.MutableFactory factory, double amount) {
       checkState(amount > 0);
-      return () -> {
-        double price = market.sellingPrice(factory.resource())*amount;
-        factory.addMoney((int)Math.ceil(price));
+      return once(() -> {
+        double price = market.sellingPrice(factory.resource()) * amount;
+        factory.addMoney((int) Math.ceil(price));
         factory.addToSupply(factory.resource(), -amount);
-        return true;
-      };
+      });
     }
   }
 }

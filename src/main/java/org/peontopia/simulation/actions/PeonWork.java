@@ -3,48 +3,49 @@ package org.peontopia.simulation.actions;
 import org.peontopia.limits.PeonLimits;
 import org.peontopia.models.MutableWorld;
 
-import java.util.stream.Collectors;
+import java.util.Random;
 
 import static org.peontopia.limits.FactoryLimits.calculateWorkerThroughput;
+import static org.peontopia.simulation.actions.Action.noop;
+import static org.peontopia.simulation.actions.Action.once;
 
 /**
  * Created by axel on 17/10/16.
  */
-public class PeonWork implements Action {
+public class PeonWork {
 
+  private static final Random random = new Random();
   private final MutableWorld.MutablePeon peon;
 
   private boolean lookedForJob = false;
-  private int workedTicks = 0;
 
   public PeonWork(MutableWorld.MutablePeon peon) {
     this.peon = peon;
   }
 
+  public static Action create(MutableWorld.MutablePeon peon) {
+    PeonWork res = new PeonWork(peon);
+    return res.apply();
+  }
 
-  @Override
-  public boolean apply() {
+  public Action apply() {
     if (!peon.employer().isPresent() && !lookedForJob) {
+    //  System.err.println("Look for jerb!!!!");
       lookedForJob = true;
       findJob();
-      return false;
     }
 
     if (peon.employer().isPresent()) {
-      if (workedTicks >= PeonLimits.WORK_TICKS_IN_DAY) {
-        work(peon);
-        return true;
-      }
-      workedTicks++;
-      return false;
+  //    System.err.println("Schedule work work work work work");
+      return once(this::work, PeonLimits.WORK_TICKS_IN_DAY+ + random.nextInt(5));
     }
 
     /* Tried to find a job, but failed. Oh noes! */
-    System.err.println("No jerb!!!");
-    return true;
+    //System.err.println("Dey took err jerbs!!!");
+    return noop();
   }
 
-  private void work(MutableWorld.MutablePeon peon) {
+  private void work() {
     MutableWorld.MutableCompany employer = peon.employer().get();
     if (employer instanceof MutableWorld.MutableFactory) {
       MutableWorld.MutableFactory f = (MutableWorld.MutableFactory)employer;
@@ -54,6 +55,7 @@ public class PeonWork implements Action {
       f.resource().ingredients().stream()
           .forEach(i -> f.addToSupply(i.resource(), -throughput * i.amount()));
       peon.addMoney(100);
+//      System.err.println("Performed work!!!");
       return;
     }
     throw new RuntimeException("Bad employer type " + employer.getClass());

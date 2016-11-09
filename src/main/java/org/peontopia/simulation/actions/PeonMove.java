@@ -2,29 +2,19 @@ package org.peontopia.simulation.actions;
 
 import org.peontopia.models.MutableWorld;
 
+import static org.peontopia.simulation.actions.Action.action;
+import static org.peontopia.simulation.actions.Action.once;
+
 /**
  * Created by axel on 16/10/16.
  */
-public class PeonMove implements Action {
-
-  private final MutableWorld.MutablePeon peon;
-  private final int x;
-  private final int y;
-  private final boolean relative;
-
-  PeonMove(MutableWorld.MutablePeon peon, int x, int y, boolean relative) {
-    this.peon = peon;
-    this.x = x;
-    this.y = y;
-    this.relative = relative;
-  }
-
-  @Override
-  public boolean apply() {
-    if(relative)
-      peon.x(peon.x()+x).y(peon.y()+y);
-    else
-      peon.x(x).y(y);
-    return true;
+public class PeonMove {
+  static Action move(MutableWorld.MutablePeon peon, int x, int y, boolean relative) {
+    if (relative) {
+      return once(() -> peon.x(peon.x() + x).y(peon.y() + y));
+    }
+    else {
+      return once(() -> peon.x(x).y(y));
+    }
   }
 }

@@ -10,7 +10,7 @@ public class MarketSimulator {
 
   private final ResourceAnalysis resourceAnalysis;
 
-  public MarketSimulator(ResourceAnalysis resourceAnalysis) {
+  public MarketSimulator(ResourceAnalysis resourceAnalysis, Scheduler scheduler) {
     this.resourceAnalysis = resourceAnalysis;
   }
 

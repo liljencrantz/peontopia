@@ -34,7 +34,7 @@ public class ActionCollector implements Collector<Action, List<Action>, Action> 
 
   @Override
   public Function<List<Action>, Action> finisher() {
-    return list -> Action.compose(list);
+    return null;//list -> Action.compose(list);
   }
 
   @Override

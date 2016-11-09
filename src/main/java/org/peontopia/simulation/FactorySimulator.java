@@ -1,5 +1,6 @@
 package org.peontopia.simulation;
 
+import org.peontopia.Game;
 import org.peontopia.models.Actor;
 import org.peontopia.models.Factory;
 import org.peontopia.models.MutableWorld;
@@ -12,7 +13,8 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.peontopia.limits.FactoryLimits.calculateFactoryThroughput;
-import static org.peontopia.simulation.actions.Action.delay;
+import static org.peontopia.simulation.actions.Action.action;
+import static org.peontopia.simulation.actions.Action.noop;
 
 /**
  * Simulate the actions of a factory. A fair bit of the simulation of a factory is actually
@@ -23,7 +25,7 @@ import static org.peontopia.simulation.actions.Action.delay;
  * and administrative tasks like upgrading the factory, firing underperforming workers, going
  * bankrupt, etc.
  */
-public class FactorySimulator implements ActorSimulator {
+public class FactorySimulator {
 
   private final Action.FactoryActions actions;
   private final FactoryAnalysis analysis;
@@ -35,9 +37,8 @@ public class FactorySimulator implements ActorSimulator {
     this.marketSimulator = marketSimulator;
   }
 
-  @Override
-  public Action step(Actor a) {
-    return step((MutableWorld.MutableFactory) a);
+  public void simulate(MutableWorld.MutableFactory f, Game g) {
+    g.scheduler().schedule(action(() -> step(f)));
   }
 
   private double weeklyProduction(Factory factory) {
@@ -52,6 +53,10 @@ public class FactorySimulator implements ActorSimulator {
   public Action step(MutableWorld.MutableFactory f) {
     if (f.money() < 0)
       return actions.bankrupt(f);
+    return Action.then(nonFatalStep(f), action(() -> step(f)));
+  }
+
+  private Action nonFatalStep(MutableWorld.MutableFactory f) {
 
     /* Whenever a factory has too little of an input good to run for one week at full capacity, two
        weeks worth of that good will be purchased on the open market. */
@@ -64,7 +69,7 @@ public class FactorySimulator implements ActorSimulator {
         .collect(toList());
 
     if (!missingResources.isEmpty()) {
-      return Action.compose(missingResources);
+      return missingResources.iterator().next();
     }
 
     /* Whenever a factory has more than one week of output at full capacity, it is sold on the open
@@ -74,7 +79,7 @@ public class FactorySimulator implements ActorSimulator {
     }
 
     // Do nothing for one day
-    return delay(() -> true, World.TICKS_IN_DAY);
+    return noop(World.TICKS_IN_DAY);
   }
 
 }

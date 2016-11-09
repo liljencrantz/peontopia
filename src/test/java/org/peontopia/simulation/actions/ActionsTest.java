@@ -3,14 +3,12 @@ package org.peontopia.simulation.actions;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.peontopia.simulation.actions.Action.compose;
-import static org.peontopia.simulation.actions.Action.delay;
 
 /**
  * Unit tests for actions
  */
 public class ActionsTest {
-
+/*
   private Action repeatedAction(int times) {
     if (times == 1)
       return () -> true;
@@ -33,5 +31,5 @@ public class ActionsTest {
     assertEquals(3, actionCount(delay(repeatedAction(1), 2)));
     assertEquals(5, actionCount(delay(repeatedAction(2), 3)));
   }
-
+*/
 }
