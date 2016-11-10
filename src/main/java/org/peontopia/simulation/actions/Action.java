@@ -1,20 +1,18 @@
 package org.peontopia.simulation.actions;
 
-import org.peontopia.models.MutableWorld;
+import org.peontopia.models.MutableFactory;
 import org.peontopia.models.Peon;
 import org.peontopia.models.Resource;
 import org.peontopia.models.World;
-import org.peontopia.simulation.ActionScheduler;
 import org.peontopia.simulation.MarketSimulator;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static java.lang.String.format;
 
 /**
  * These specific actions, like moving from A to B, buying some goods,
@@ -106,15 +104,15 @@ public interface Action {
     private Random random = new Random();
 
     /* Basic passage of time. Become more tired, more hungry, etc. */
-    public Action age(MutableWorld.MutablePeon peon) {
+    public Action age(Peon peon) {
       return once(() -> peon.addRest(-1).addFood(-1));
     }
 
-    public Action move(MutableWorld.MutablePeon p, int dx, int dy) {
+    public Action move(Peon p, int dx, int dy) {
       return PeonMove.move(p, dx, dy, true);
     }
 
-    public Action setCoord(MutableWorld.MutablePeon p, int x, int y) {
+    public Action setCoord(Peon p, int x, int y) {
       return PeonMove.move(p, x, y, false);
     }
 
@@ -124,7 +122,7 @@ public interface Action {
      * @param peon the peon that should perform the action
      * @return true
      */
-    public Action die(MutableWorld.MutablePeon peon) {
+    public Action die(Peon peon) {
       return once(() -> peon.remove());
     }
 
@@ -133,10 +131,10 @@ public interface Action {
      * @param peon the peon that should perform the action
      * @return true if this peon is fully rested and this action need not be applied again
      */
-    public Action sleep(MutableWorld.MutablePeon peon) {
+    public Action sleep(Peon peon) {
       final int SLEEP_REST_TICK = 3;
       int steps = (Peon.MAX_REST-peon.rest())/SLEEP_REST_TICK + 1 + random.nextInt(5);
-      //System.out.println("Sleep for " + steps + " ticks");
+      System.out.println(format("Sleep for %d ticks in day %d", steps, peon.world().day()));
       return once(() -> peon.rest(Peon.MAX_REST), steps);
     }
 
@@ -145,7 +143,7 @@ public interface Action {
      * @param peon the peon that should perform the action
      * @return true if this peon cannot eat any more
      */
-    public Action eat(MutableWorld.MutablePeon peon) {
+    public Action eat(Peon peon) {
         double price = 3;
         int EAT_SPEED = 10;
         int time = + random.nextInt(2) + peon.food()/EAT_SPEED;
@@ -153,7 +151,7 @@ public interface Action {
         if(peon.money() < price)
           return noop();
 
-        System.out.println("Eat for " + time + " ticks");
+//        System.out.println("Eat for " + time + " ticks");
         return once(() -> peon.addMoney((int) -price).food(Peon.MAX_FOOD), time);
     }
 
@@ -163,7 +161,7 @@ public interface Action {
      * @param p
      * @return
      */
-    public Action work(MutableWorld.MutablePeon p) {
+    public Action work(Peon p) {
       return PeonWork.create(p);
     }
 
@@ -182,11 +180,11 @@ public interface Action {
 
   class FactoryActions {
 
-    public Action bankrupt(MutableWorld.MutableFactory f) {
+    public Action bankrupt(MutableFactory f) {
       return once(() -> f.remove());
     }
 
-    public Action purchase(MarketSimulator market, MutableWorld.MutableFactory factory, Resource r, double amount){
+    public Action purchase(MarketSimulator market, MutableFactory factory, Resource r, double amount){
       checkState(amount > 0);
       return once(() -> {
         double price = market.buyingPrice(r) * amount;
@@ -195,7 +193,7 @@ public interface Action {
       });
     }
 
-    public Action sell(MarketSimulator market, MutableWorld.MutableFactory factory, double amount) {
+    public Action sell(MarketSimulator market, MutableFactory factory, double amount) {
       checkState(amount > 0);
       return once(() -> {
         double price = market.sellingPrice(factory.resource()) * amount;

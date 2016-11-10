@@ -80,41 +80,4 @@ public class MutableWorldTest {
     world.tile(3, 0);
   }
 
-  @Test
-  public void testCopy() {
-    world.addPeon(1, 1);
-    world.freeze();
-    MutableWorld newWorld = MutableWorld.thaw(world);
-
-    assertEquals(false, newWorld.frozen());
-    assertEquals(1, world.tile(1, 1).peons().size());
-    assertEquals(1, newWorld.tile(1, 1).peons().size());
-
-    newWorld.addPeon(1, 1);
-    assertEquals(1, world.tile(1, 1).peons().size());
-    assertEquals(2, newWorld.tile(1, 1).peons().size());
-  }
-
-  @Test
-  public void testIdConsistentOnCopy() {
-    long pid = world.addPeon(1, 1).id();
-    long fid = world.addFactory(0, 0, resources.get("Diamond")).id();
-    long sid = world.addStore(0, 1).id();
-
-    assertEquals(pid, world.peon(pid).id());
-    assertEquals(fid, world.factory(fid).id());
-    assertEquals(sid, world.store(sid).id());
-
-    world.freeze();
-    assertEquals(pid, world.peon(pid).id());
-    assertEquals(fid, world.factory(fid).id());
-    assertEquals(sid, world.store(sid).id());
-
-    MutableWorld newWorld = MutableWorld.thaw(world);
-
-    assertEquals(pid, newWorld.peon(pid).id());
-    assertEquals(fid, newWorld.factory(fid).id());
-    assertEquals(sid, newWorld.store(sid).id());
-  }
-
 }

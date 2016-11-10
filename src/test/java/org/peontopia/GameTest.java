@@ -1,6 +1,8 @@
 package org.peontopia;
 
 import org.junit.Test;
+import org.peontopia.models.MutableFactory;
+import org.peontopia.models.Peon;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.models.World;
 
@@ -24,24 +26,24 @@ public class GameTest {
 
     for (long i=0; i< World.TICKS_IN_DAY*40; i++) {
       for (int j = 0; j< 100; j++) {
-        if (peon > 1000000)
+        if (peon >= 1)
           break;
-        MutableWorld.MutablePeon pp = world.addPeon(peon / 1900, peon % 1900 + 20);
+        Peon pp = world.addPeon(peon / 1900, peon % 1900 + 20);
         s.peonSimulator().simulate(pp, s);
         peon++;
 
       }
 
       for (int j = 0; j< 10; j++) {
-        if (factory > 10000)
+        if (factory >= 1)
           break;
-        MutableWorld.MutableFactory ff = world.addFactory(factory / 10, factory % 10, s.resources().get("Glass"));
+        MutableFactory ff = world.addFactory(factory / 10, factory % 10, s.resources().get("Glass"));
         s.factorySimulator().simulate(ff, s);
         factory++;
       }
 
       s.step();
-      System.err.println(format("Step %d, population %d", i, peon));
+      //System.err.println(format("Step %d, population %d", i, peon));
     }
     System.err.println("Done all steps");
   }

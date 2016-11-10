@@ -20,7 +20,7 @@ public class MutableFactoryTest {
   public final ExpectedException exception = ExpectedException.none();
 
   MutableWorld world;
-  MutableWorld.MutableFactory factory;
+  MutableFactory factory;
   Map<String, Resource> resources =
       new ResourceLoader().load(ResourceLoaderTest.testResourceData);
 

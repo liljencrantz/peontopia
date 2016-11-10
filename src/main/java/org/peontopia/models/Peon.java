@@ -3,23 +3,181 @@ package org.peontopia.models;
 import java.util.Optional;
 
 /**
- * Created by axel on 14/10/16.
+ * Created by axel on 2016-11-10.
  */
-public interface Peon extends Actor {
+public class Peon extends MutableActor implements Actor {
 
-  public static final int MAX_REST = World.TICKS_IN_DAY*3;
-  public static final int MAX_FOOD = World.TICKS_IN_DAY*3;
+  public static final int MAX_REST = World.TICKS_IN_DAY * 3;
+  public static final int MAX_FOOD = World.TICKS_IN_DAY * 3;
   public static final int START_MONEY = 10000;
 
-  String name();
-  double happiness();
-  int money();
-  int rest();
-  int food();
-  int x();
-  int y();
-  Education education();
+  private long id;
+  private String name;
+  private double happiness;
+  private int money;
+  private int rest;
+  private int food;
+  private int x;
+  private int y;
 
-  Optional<? extends Company> employer();
-  Tile tile();
+  private Education education;
+
+  public Peon employer(MutableCompany employer) {
+    this.employer = Optional.of(employer);
+    return this;
+  }
+
+  public Peon removeEmployer() {
+    this.employer = Optional.empty();
+    return this;
+  }
+
+  Optional<MutableCompany> employer;
+
+  public Peon(MutableWorld world, int x, int y) {
+    super(world);
+    this.id = world.nextId();
+    this.name = "Bengt";
+    this.x = x;
+    this.y = y;
+    this.money = START_MONEY;
+    this.rest = MAX_REST;
+    this.food = MAX_FOOD;
+    this.happiness = 0;
+    this.education = Education.NONE;
+    this.employer = Optional.empty();
+
+    world().add(this);
+    world().tile(x, y).peons.add(this);
+  }
+
+  public void remove() {
+    world().remove(this);
+    tile().peons.remove(this);
+  }
+
+  public long id() {
+    return id;
+  }
+
+  public String name() {
+    return name;
+  }
+
+  public double happiness() {
+    return happiness;
+  }
+
+  public Peon happiness(double v) {
+    happiness = v;
+    return this;
+  }
+
+  public Peon addHappiness(double v) {
+    happiness += v;
+    return this;
+  }
+
+  public int money() {
+    return money;
+  }
+
+  public Peon money(int v) {
+    money = v;
+    return this;
+  }
+
+  public Peon addMoney(int v) {
+    money += v;
+    return this;
+  }
+
+  public int rest() {
+    return rest;
+  }
+
+  public Peon rest(int v) {
+    if (v < 0 || v > MAX_REST)
+      throw new IllegalArgumentException();
+    rest = v;
+    return this;
+  }
+
+  public Peon addRest(int v) {
+    rest = Math.max(0, Math.min(rest + v, MAX_REST));
+    return this;
+  }
+
+  public int food() {
+    return food;
+  }
+
+  public Peon food(int v) {
+    food = v;
+    return this;
+  }
+
+  public Peon addFood(int v) {
+    food = Math.max(0, Math.min(food + v, MAX_FOOD));
+    return this;
+  }
+
+  public int x() {
+    return x;
+  }
+
+  public Peon x(int v) {
+    world().checkCoordinate(v, y);
+    world().tile(x, y).peons.remove(this);
+    x = v;
+    world().tile(x, y).peons.add(this);
+    return this;
+  }
+
+  public Peon addX(int v) {
+    world().checkCoordinate(x + v, y);
+    world().tile(x, y).peons.remove(this);
+    x += v;
+    world().tile(x, y).peons.add(this);
+    return this;
+  }
+
+  public int y() {
+    return y;
+  }
+
+  public Education education() {
+    return education;
+  }
+
+  public Peon education(Education education) {
+    this.education = education;
+    return this;
+  }
+
+  public Optional<MutableCompany> employer() {
+    return employer;
+  }
+
+  public MutableTile tile() {
+    return world().tile(x(), y());
+  }
+
+  public Peon y(int v) {
+    world().checkCoordinate(x, v);
+    world().tile(x, y).peons.remove(this);
+    y = v;
+    world().tile(x, y).peons.add(this);
+
+    return this;
+  }
+
+  public Peon addY(int v) {
+    world().checkCoordinate(x, y + v);
+    world().tile(x, y).peons.remove(this);
+    y += v;
+    world().tile(x, y).peons.add(this);
+    return this;
+  }
+
 }

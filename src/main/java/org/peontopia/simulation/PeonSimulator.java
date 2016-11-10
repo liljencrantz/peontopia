@@ -1,13 +1,11 @@
 package org.peontopia.simulation;
 
 import org.peontopia.Game;
-import org.peontopia.models.MutableWorld;
+import org.peontopia.models.Peon;
 import org.peontopia.simulation.actions.Action;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static org.peontopia.simulation.actions.Action.action;
@@ -27,13 +25,21 @@ public class PeonSimulator {
     this.actions = actions;
   }
 
-  public void simulate(MutableWorld.MutablePeon p, Game g) {
+  public void simulate(Peon p, Game g) {
     g.scheduler().schedule(action(() -> step(p)));
   }
 
-  private Action step(MutableWorld.MutablePeon peon) {
+  private Action step(Peon peon) {
 
     //System.err.println("Step");
+    //  System.err.println("Non-fatal step");
+    if (!allData.containsKey(peon.id())) {
+      //System.err.println("New peon!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      allData.put(peon.id(), new Data(peon.world().time()));
+    }
+    Data data = allData.get(peon.id());
+
+    age(peon, data);
 
     /* First check if we should be dead */
     if (peon.food() <= 0) {
@@ -46,23 +52,24 @@ public class PeonSimulator {
       return actions.die(peon);
     }
 
-    return Action.then(nonFatalStep(peon), action((() -> step(peon))));
+    return Action.then(nonFatalStep(peon, data), action((() -> step(peon))));
   }
 
-  private Action nonFatalStep(MutableWorld.MutablePeon peon) {
-  //  System.err.println("Non-fatal step");
-    if (!allData.containsKey(peon.id())) {
-      //System.err.println("New peon!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      allData.put(peon.id(), new Data());
-    }
-    Data data = allData.get(peon.id());
+  private void age(Peon peon, Data data) {
+    int diff = (int)(peon.world().time() - data.lastEvalTick);
+    peon.addFood(-diff);
+    peon.addRest(-diff);
+    data.lastEvalTick = peon.world().time();
+  }
+
+  private Action nonFatalStep(Peon peon, Data data) {
 
     int day = peon.world().day();
 //    System.err.println("Day " + day + " tick " + peon.world().time());
 
     /* If we're hungry, eat */
     if (peon.food() < FOOD_HUNGRY) {
-      System.err.println("Eat");
+      //System.err.println("Eat");
       return actions.eat(peon);
     }
 
@@ -97,6 +104,11 @@ public class PeonSimulator {
     int lastWorkDay = -1;
     int lastSleepDay = -1;
     int lastChoresDay = -1;
+    long lastEvalTick;
+
+    Data(long lastEvalTick) {
+      this.lastEvalTick = lastEvalTick;
+    }
   }
 
 }

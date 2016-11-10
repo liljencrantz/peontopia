@@ -11,13 +11,13 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by axel on 16/10/16.
  */
-public class MutablePeonTest {
+public class PeonTest {
 
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
   MutableWorld world;
-  MutableWorld.MutablePeon peon;
+  Peon peon;
 
   @Before
   public void setUp() {

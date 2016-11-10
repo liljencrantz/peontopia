@@ -59,7 +59,7 @@ public class Scheduler implements ActionScheduler {
       next.ifPresent(nextAction -> schedule(nextAction));
     }));
 
-    System.err.println(String.format("We do %.2f actions per step", (double)actionCount/steps));
+    //System.err.println(String.format("We do %.2f actions per step", (double)actionCount/steps));
         //Timer.print();
     return this;
   }

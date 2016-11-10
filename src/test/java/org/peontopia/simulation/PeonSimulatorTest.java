@@ -1,15 +1,14 @@
 package org.peontopia.simulation;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.peontopia.models.Peon;
 import org.peontopia.models.MutableWorld;
 import org.peontopia.simulation.actions.Action;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for PeonSimulator
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class PeonSimulatorTest {
 
   MutableWorld world;
-  MutableWorld.MutablePeon peon;
+  Peon peon;
   PeonSimulator simulator;
 
   @Mock
