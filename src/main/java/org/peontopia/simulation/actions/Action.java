@@ -1,9 +1,10 @@
 package org.peontopia.simulation.actions;
 
+import org.peontopia.limits.PeonLimits;
+import org.peontopia.limits.TimeLimits;
 import org.peontopia.models.Factory;
 import org.peontopia.models.Peon;
 import org.peontopia.models.Resource;
-import org.peontopia.models.World;
 import org.peontopia.simulation.MarketSimulator;
 
 import java.util.Optional;
@@ -133,9 +134,9 @@ public interface Action {
      */
     public Action sleep(Peon peon) {
       final int SLEEP_REST_TICK = 3;
-      int steps = (Peon.MAX_REST-peon.rest())/SLEEP_REST_TICK + 1 + random.nextInt(5);
+      int steps = (PeonLimits.MAX_REST-peon.rest())/SLEEP_REST_TICK + 1 + random.nextInt(5);
       System.out.println(format("Sleep for %d ticks in day %d", steps, peon.world().day()));
-      return once(() -> peon.rest(Peon.MAX_REST), steps);
+      return once(() -> peon.rest(PeonLimits.MAX_REST), steps);
     }
 
     /**
@@ -152,7 +153,7 @@ public interface Action {
           return noop();
 
 //        System.out.println("Eat for " + time + " ticks");
-        return once(() -> peon.addMoney((int) -price).food(Peon.MAX_FOOD), time);
+        return once(() -> peon.addMoney((int) -price).food(PeonLimits.MAX_FOOD), time);
     }
 
     /**
@@ -166,13 +167,13 @@ public interface Action {
     }
 
     public Action chores(Peon p) {
-      int time = World.TICKS_IN_DAY/10;
+      int time = TimeLimits.TICKS_IN_DAY/10;
   //    System.out.println("Chores for  " + time + " ticks");
       return noop(time);
     }
 
     public Action play(Peon p) {
-      int time = World.TICKS_IN_DAY/10;
+      int time = TimeLimits.TICKS_IN_DAY/10;
 //      System.out.println("Play for  " + time + " ticks");
       return noop(time);
     }

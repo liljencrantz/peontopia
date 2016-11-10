@@ -1,12 +1,8 @@
-package org.peontopia;
+package org.peontopia.simulation;
 
 import org.peontopia.loaders.ResourceLoader;
 import org.peontopia.models.World;
 import org.peontopia.models.Resource;
-import org.peontopia.simulation.FactorySimulator;
-import org.peontopia.simulation.MarketSimulator;
-import org.peontopia.simulation.PeonSimulator;
-import org.peontopia.simulation.Scheduler;
 import org.peontopia.simulation.actions.Action;
 import org.peontopia.simulation.analysis.FactoryAnalysis;
 import org.peontopia.simulation.analysis.ResourceAnalysis;

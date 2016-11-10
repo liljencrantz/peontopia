@@ -1,7 +1,7 @@
 package org.peontopia.simulation.analysis;
 
+import org.peontopia.limits.TimeLimits;
 import org.peontopia.models.Resource;
-import org.peontopia.models.World;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +64,7 @@ public class ResourceAnalysis {
     }
 
     double timePerUnit = 1.0 / calculateWorkerThroughput(r, level);
-    salaryCost = timePerUnit * salaryAnalysis.baseDailySalary(level)/ World.TICKS_IN_DAY;
+    salaryCost = timePerUnit * salaryAnalysis.baseDailySalary(level)/ TimeLimits.TICKS_IN_DAY;
 
     double value = (ingredientCost + salaryCost + scarcityCost) * (1.0 + OVERHEAD + PROFIT_MARGIN);
     data.put(r.name(), new Analysis(value));

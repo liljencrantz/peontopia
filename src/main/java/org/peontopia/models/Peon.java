@@ -1,15 +1,13 @@
 package org.peontopia.models;
 
+import org.peontopia.limits.PeonLimits;
+
 import java.util.Optional;
 
 /**
  * Created by axel on 2016-11-10.
  */
 public class Peon extends Actor {
-
-  public static final int MAX_REST = World.TICKS_IN_DAY * 3;
-  public static final int MAX_FOOD = World.TICKS_IN_DAY * 3;
-  public static final int START_MONEY = 10000;
 
   private long id;
   private String name;
@@ -40,9 +38,9 @@ public class Peon extends Actor {
     this.name = "Bengt";
     this.x = x;
     this.y = y;
-    this.money = START_MONEY;
-    this.rest = MAX_REST;
-    this.food = MAX_FOOD;
+    this.money = PeonLimits.START_MONEY;
+    this.rest = PeonLimits.MAX_REST;
+    this.food = PeonLimits.MAX_FOOD;
     this.happiness = 0;
     this.education = Education.NONE;
     this.employer = Optional.empty();
@@ -97,14 +95,14 @@ public class Peon extends Actor {
   }
 
   public Peon rest(int v) {
-    if (v < 0 || v > MAX_REST)
+    if (v < 0 || v > PeonLimits.MAX_REST)
       throw new IllegalArgumentException();
     rest = v;
     return this;
   }
 
   public Peon addRest(int v) {
-    rest = Math.max(0, Math.min(rest + v, MAX_REST));
+    rest = Math.max(0, Math.min(rest + v, PeonLimits.MAX_REST));
     return this;
   }
 
@@ -118,7 +116,7 @@ public class Peon extends Actor {
   }
 
   public Peon addFood(int v) {
-    food = Math.max(0, Math.min(food + v, MAX_FOOD));
+    food = Math.max(0, Math.min(food + v, PeonLimits.MAX_FOOD));
     return this;
   }
 
@@ -159,7 +157,7 @@ public class Peon extends Actor {
     return employer;
   }
 
-  public MutableTile tile() {
+  public Tile tile() {
     return world().tile(x(), y());
   }
 

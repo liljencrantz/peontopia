@@ -1,9 +1,8 @@
 package org.peontopia.simulation;
 
-import org.peontopia.Game;
+import org.peontopia.limits.TimeLimits;
 import org.peontopia.models.Factory;
 import org.peontopia.models.Resource;
-import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
 import org.peontopia.simulation.analysis.FactoryAnalysis;
 
@@ -41,7 +40,7 @@ public class FactorySimulator {
 
   private double weeklyProduction(Factory factory) {
     return calculateFactoryThroughput(factory.resource(), factory.level()) *
-        World.TICKS_IN_DAY * 7;
+        TimeLimits.TICKS_IN_DAY * 7;
   }
 
   private double weeklySupply(Factory factory, Resource.Ingredient ingredient) {
@@ -77,7 +76,7 @@ public class FactorySimulator {
     }
 
     // Do nothing for one day
-    return noop(World.TICKS_IN_DAY);
+    return noop(TimeLimits.TICKS_IN_DAY);
   }
 
 }

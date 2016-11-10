@@ -2,6 +2,8 @@ package org.peontopia.models;
 
 import com.google.common.collect.ImmutableList;
 
+import org.peontopia.limits.TimeLimits;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,15 +22,13 @@ import static org.peontopia.limits.FactoryLimits.workerCount;
  */
 public class World {
 
-  public static final int TICKS_IN_DAY = 24*6;
-
   private long nextId = 0;
 
   private final Map<Long, Actor> actors;
 
   private final int width;
   private final int height;
-  private final List<MutableTile> tiles;
+  private final List<Tile> tiles;
 
   private boolean frozen = false;
   private long time = 0;
@@ -38,7 +38,7 @@ public class World {
     this.height = height;
     this.tiles = ImmutableList.copyOf(IntStream.range(0, width*height)
         .boxed()
-        .map(MutableTile::new)
+        .map(Tile::new)
         .collect(Collectors.toList()));
 
     actors = new HashMap<>();
@@ -108,11 +108,11 @@ public class World {
     return height;
   }
 
-  public List<MutableTile> tiles() {
+  public List<Tile> tiles() {
     return tiles;
   }
 
-  public MutableTile tile(int x, int y) {
+  public Tile tile(int x, int y) {
     checkCoordinate(x, y);
     return tiles().get(x + width()*y);
   }
@@ -140,6 +140,6 @@ public class World {
   }
 
   public int day() {
-    return (int)(time() / TICKS_IN_DAY);
+    return (int)(time() / TimeLimits.TICKS_IN_DAY);
   }
 }

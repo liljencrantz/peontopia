@@ -1,7 +1,6 @@
 package org.peontopia.limits;
 
 import org.peontopia.models.Resource;
-import org.peontopia.models.World;
 
 import static java.lang.Math.pow;
 
@@ -27,7 +26,7 @@ public class FactoryLimits {
         BASE_MANUFACTURING_RATE
             * pow(RESOURCE_SPEED_EXPONENT, resource.speed())
             * pow(FACTORY_LEVEL_EXPONENT, factoryLevel)
-            / World.TICKS_IN_DAY / pow(RESOURCE_SPEED_EXPONENT, 3) / pow(FACTORY_LEVEL_EXPONENT, 1);
+            / TimeLimits.TICKS_IN_DAY / pow(RESOURCE_SPEED_EXPONENT, 3) / pow(FACTORY_LEVEL_EXPONENT, 1);
   }
 
   public static double calculateFactoryThroughput(Resource resource, double factoryLevel) {

@@ -1,6 +1,5 @@
 package org.peontopia.simulation;
 
-import org.peontopia.Game;
 import org.peontopia.models.Peon;
 import org.peontopia.simulation.actions.Action;
 
