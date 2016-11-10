@@ -5,7 +5,7 @@ import java.util.Optional;
 /**
  * Created by axel on 2016-11-10.
  */
-public class Peon extends MutableActor implements Actor {
+public class Peon extends Actor {
 
   public static final int MAX_REST = World.TICKS_IN_DAY * 3;
   public static final int MAX_FOOD = World.TICKS_IN_DAY * 3;
@@ -21,8 +21,9 @@ public class Peon extends MutableActor implements Actor {
   private int y;
 
   private Education education;
+  Optional<Company> employer;
 
-  public Peon employer(MutableCompany employer) {
+  public Peon employer(Company employer) {
     this.employer = Optional.of(employer);
     return this;
   }
@@ -32,9 +33,8 @@ public class Peon extends MutableActor implements Actor {
     return this;
   }
 
-  Optional<MutableCompany> employer;
 
-  public Peon(MutableWorld world, int x, int y) {
+  public Peon(World world, int x, int y) {
     super(world);
     this.id = world.nextId();
     this.name = "Bengt";
@@ -155,7 +155,7 @@ public class Peon extends MutableActor implements Actor {
     return this;
   }
 
-  public Optional<MutableCompany> employer() {
+  public Optional<Company> employer() {
     return employer;
   }
 

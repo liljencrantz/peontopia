@@ -1,7 +1,7 @@
 package org.peontopia;
 
 import org.peontopia.loaders.ResourceLoader;
-import org.peontopia.models.MutableWorld;
+import org.peontopia.models.World;
 import org.peontopia.models.Resource;
 import org.peontopia.simulation.FactorySimulator;
 import org.peontopia.simulation.MarketSimulator;
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class Game {
 
-  private final MutableWorld world;
+  private final World world;
   private final Scheduler scheduler;
   private final Map<String, Resource> resources;
   private final MarketSimulator market;
@@ -31,7 +31,7 @@ public class Game {
   private final PeonSimulator peonSimulator;
   private final FactorySimulator factorySimulator;
 
-  public Game(MutableWorld world, Scheduler scheduler, Map<String, Resource> resources, MarketSimulator market, PeonSimulator peonSimulator, FactorySimulator factorySimulator) {
+  public Game(World world, Scheduler scheduler, Map<String, Resource> resources, MarketSimulator market, PeonSimulator peonSimulator, FactorySimulator factorySimulator) {
     this.world = world;
     this.scheduler = scheduler;
     this.resources = resources;
@@ -62,13 +62,13 @@ public class Game {
     PeonSimulator peonSimulator = new PeonSimulator(new Action.PeonActions());
     FactorySimulator factorySimulator = new FactorySimulator(new Action.FactoryActions(), factoryAnalysis, marketSimulator);
 
-    MutableWorld world = new MutableWorld(w, h);
+    World world = new World(w, h);
 
     return new Game(world, scheduler, resources, marketSimulator, peonSimulator, factorySimulator);
   }
 
 
-  public MutableWorld world() {
+  public World world() {
     return world;
   }
 

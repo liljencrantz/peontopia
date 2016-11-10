@@ -5,11 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.peontopia.models.ActorMapper;
-import org.peontopia.models.MutableWorld;
-import org.peontopia.models.Peon;
 import org.peontopia.simulation.actions.Action;
 
 import java.util.Optional;
@@ -17,11 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.peontopia.simulation.actions.Action.action;
 import static org.peontopia.simulation.actions.Action.maybe;
 

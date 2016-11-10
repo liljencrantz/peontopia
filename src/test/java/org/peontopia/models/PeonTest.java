@@ -16,12 +16,12 @@ public class PeonTest {
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
-  MutableWorld world;
+  World world;
   Peon peon;
 
   @Before
   public void setUp() {
-    world = new MutableWorld(2, 2);
+    world = new World(2, 2);
     peon = world.addPeon(1, 1);
   }
 
@@ -78,20 +78,6 @@ public class PeonTest {
   public void testInvalidMoveRelative() {
     exception.expect(IndexOutOfBoundsException.class);
     peon.addY(5);
-  }
-
-  @Test
-  public void testMoveFrozen() {
-    world.freeze();
-    exception.expect(ModifyFrozenException.class);
-    peon.y(0);
-  }
-
-  @Test
-  public void testMutateFrozenMoney() {
-    world.freeze();
-    exception.expect(ModifyFrozenException.class);
-    peon.money(0);
   }
 
 }

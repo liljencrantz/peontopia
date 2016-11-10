@@ -1,6 +1,6 @@
 package org.peontopia.simulation.actions;
 
-import org.peontopia.models.MutableFactory;
+import org.peontopia.models.Factory;
 import org.peontopia.models.Peon;
 import org.peontopia.models.Resource;
 import org.peontopia.models.World;
@@ -180,11 +180,11 @@ public interface Action {
 
   class FactoryActions {
 
-    public Action bankrupt(MutableFactory f) {
+    public Action bankrupt(Factory f) {
       return once(() -> f.remove());
     }
 
-    public Action purchase(MarketSimulator market, MutableFactory factory, Resource r, double amount){
+    public Action purchase(MarketSimulator market, Factory factory, Resource r, double amount){
       checkState(amount > 0);
       return once(() -> {
         double price = market.buyingPrice(r) * amount;
@@ -193,7 +193,7 @@ public interface Action {
       });
     }
 
-    public Action sell(MarketSimulator market, MutableFactory factory, double amount) {
+    public Action sell(MarketSimulator market, Factory factory, double amount) {
       checkState(amount > 0);
       return once(() -> {
         double price = market.sellingPrice(factory.resource()) * amount;

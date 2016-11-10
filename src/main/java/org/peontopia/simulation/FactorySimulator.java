@@ -2,7 +2,6 @@ package org.peontopia.simulation;
 
 import org.peontopia.Game;
 import org.peontopia.models.Factory;
-import org.peontopia.models.MutableFactory;
 import org.peontopia.models.Resource;
 import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
@@ -36,7 +35,7 @@ public class FactorySimulator {
     this.marketSimulator = marketSimulator;
   }
 
-  public void simulate(MutableFactory f, Game g) {
+  public void simulate(Factory f, Game g) {
     g.scheduler().schedule(action(() -> step(f)));
   }
 
@@ -49,13 +48,13 @@ public class FactorySimulator {
     return weeklyProduction(factory) * ingredient.amount();
   }
 
-  public Action step(MutableFactory f) {
+  public Action step(Factory f) {
     if (f.money() < 0)
       return actions.bankrupt(f);
     return Action.then(nonFatalStep(f), action(() -> step(f)));
   }
 
-  private Action nonFatalStep(MutableFactory f) {
+  private Action nonFatalStep(Factory f) {
 
     /* Whenever a factory has too little of an input good to run for one week at full capacity, two
        weeks worth of that good will be purchased on the open market. */

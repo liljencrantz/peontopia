@@ -1,10 +1,15 @@
 package org.peontopia.models;
 
 /**
- * Created by axel on 15/10/16.
+ * Created by axel on 2016-11-10.
  */
-public interface Store extends Company {
-  int x();
-  int y();
+class Store extends Company {
 
+  public Store(World world, int x, int y) {
+    super(world, x, y);
+  }
+
+  public int employeeOpenings(Education education) {
+    return 0;
+  }
 }

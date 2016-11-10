@@ -13,20 +13,20 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for MutableWorld
+ * Unit tests for World
  */
-public class MutableWorldTest {
+public class WorldTest {
 
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
-  MutableWorld world;
+  World world;
   Map<String, Resource> resources =
       new ResourceLoader().load(ResourceLoaderTest.testResourceData);
 
   @Before
   public void setUp() {
-    world = new MutableWorld(2, 2);
+    world = new World(2, 2);
   }
 
   @Test
@@ -46,20 +46,6 @@ public class MutableWorldTest {
   public void testAddStore() {
     world.addStore(1, 1);
     assertEquals(1, world.actors().size());
-  }
-
-  @Test
-  public void testFreeze() {
-    assertEquals(false, world.frozen());
-    world.freeze();
-    assertEquals(true, world.frozen());
-  }
-
-  @Test
-  public void testAddPeonToFrozen() {
-    world.freeze();
-    exception.expect(ModifyFrozenException.class);
-    world.addPeon(1, 1);
   }
 
   @Test

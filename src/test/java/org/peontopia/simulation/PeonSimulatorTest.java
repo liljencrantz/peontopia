@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.peontopia.models.Peon;
-import org.peontopia.models.MutableWorld;
+import org.peontopia.models.World;
 import org.peontopia.simulation.actions.Action;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class PeonSimulatorTest {
 
-  MutableWorld world;
+  World world;
   Peon peon;
   PeonSimulator simulator;
 
@@ -25,7 +25,7 @@ public class PeonSimulatorTest {
 
   @Before
   public void setUp() {
-    world = new MutableWorld(5, 5);
+    world = new World(5, 5);
     peon = world.addPeon(1, 1);
     simulator = new PeonSimulator(actions);
   }

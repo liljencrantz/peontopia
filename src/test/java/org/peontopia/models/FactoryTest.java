@@ -13,20 +13,20 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit test for MutableWorld.MutableFactory
+ * Unit test for World.Factory
  */
-public class MutableFactoryTest {
+public class FactoryTest {
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
-  MutableWorld world;
-  MutableFactory factory;
+  World world;
+  Factory factory;
   Map<String, Resource> resources =
       new ResourceLoader().load(ResourceLoaderTest.testResourceData);
 
   @Before
   public void setUp() {
-    world = new MutableWorld(2, 2);
+    world = new World(2, 2);
     factory = world.addFactory(1, 1, resources.get("Diamond"));
   }
 
@@ -47,10 +47,4 @@ public class MutableFactoryTest {
     factory.addToSupply(resources.get("Clay"), 3.0);
   }
 
-  @Test
-  public void testMutateFrozenFactory() {
-    world.freeze();
-    exception.expect(ModifyFrozenException.class);
-    factory.addToSupply(resources.get("Coal"), 3.0);
-  }
 }

@@ -1,8 +1,8 @@
 package org.peontopia.simulation.actions;
 
 import org.peontopia.limits.PeonLimits;
-import org.peontopia.models.MutableCompany;
-import org.peontopia.models.MutableFactory;
+import org.peontopia.models.Company;
+import org.peontopia.models.Factory;
 import org.peontopia.models.Peon;
 
 import java.util.Random;
@@ -48,9 +48,9 @@ public class PeonWork {
   }
 
   private void work() {
-    MutableCompany employer = peon.employer().get();
-    if (employer instanceof MutableFactory) {
-      MutableFactory f = (MutableFactory)employer;
+    Company employer = peon.employer().get();
+    if (employer instanceof Factory) {
+      Factory f = (Factory)employer;
       double throughput = calculateWorkerThroughput(
           f.resource(), f.level()) * PeonLimits.WORK_TICKS_IN_DAY;
       f.addToSupply(f.resource(), throughput);
@@ -65,8 +65,8 @@ public class PeonWork {
 
   private void findJob() {
     peon.world().actors().stream()
-        .filter(a -> a instanceof MutableCompany)
-        .map(a -> (MutableCompany) a)
+        .filter(a -> a instanceof Company)
+        .map(a -> (Company) a)
         .filter(c -> c.employeeOpenings(peon.education()) > 0)
         .findAny()
         .ifPresent(e -> e.addEmployee(peon));
